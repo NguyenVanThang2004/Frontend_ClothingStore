@@ -1,0 +1,38 @@
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow-lg p-4 rounded-4" style="max-width: 400px; width: 100%;">
+        <h3 class="text-center mb-4">Đăng nhập</h3>
+
+        <form>
+            <!-- Email -->
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" class="form-control" placeholder="Nhập email" required>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+                <label for="password" class="form-label">Mật khẩu</label>
+                <input type="password" id="password" class="form-control" placeholder="Nhập mật khẩu" required>
+            </div>
+
+            <!-- Login button -->
+            <button type="submit" class="btn btn-primary w-100 mb-3">Đăng nhập</button>
+        </form>
+
+        <div class="text-center mb-2">Hoặc đăng nhập với</div>
+
+        <!-- Social login -->
+        <div class="d-flex justify-content-between">
+            <button class="btn btn-outline-primary w-50 me-2">
+                <i class="fa fa-facebook me-2"></i> Facebook
+            </button>
+            <button class="btn btn-outline-danger w-50">
+                <i class="fa fa-google me-2"></i> Google
+            </button>
+        </div>
+
+        <div class="text-center mt-3">
+            <small>Chưa có tài khoản? <a routerLink="/register">Đăng ký ngay</a></small>
+        </div>
+    </div>
+</div>
