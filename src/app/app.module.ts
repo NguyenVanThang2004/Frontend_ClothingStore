@@ -9,6 +9,7 @@ import { HomeComponent } from './home/home.component';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
+import { ShopingCartComponent } from './shoping-cart/shoping-cart.component';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { ProductDetailComponent } from './product-detail/product-detail.componen
     HomeComponent,
     HeaderComponent,
     FooterComponent,
-    ProductDetailComponent
+    ProductDetailComponent,
+    ShopingCartComponent
   ],
   imports: [
     BrowserModule,
@@ -25,6 +27,6 @@ import { ProductDetailComponent } from './product-detail/product-detail.componen
     SlickCarouselModule
   ],
   providers: [],
-  bootstrap: [ProductDetailComponent]
+  bootstrap: [ShopingCartComponent]
 })
 export class AppModule { }
