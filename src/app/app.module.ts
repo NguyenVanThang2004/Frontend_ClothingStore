@@ -3,14 +3,21 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { SlickCarouselModule } from 'ngx-slick-carousel';
 
+
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
+import { HeaderComponent } from './header/header.component';
+import { FooterComponent } from './footer/footer.component';
+import { ProductDetailComponent } from './product-detail/product-detail.component';
 
 
 @NgModule({
   declarations: [
 
-    HomeComponent
+    HomeComponent,
+    HeaderComponent,
+    FooterComponent,
+    ProductDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -18,6 +25,6 @@ import { HomeComponent } from './home/home.component';
     SlickCarouselModule
   ],
   providers: [],
-  bootstrap: [HomeComponent]
+  bootstrap: [ProductDetailComponent]
 })
 export class AppModule { }
