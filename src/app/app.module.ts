@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { SlickCarouselModule } from 'ngx-slick-carousel';
-
+import { FormsModule } from '@angular/forms'; // 👈 import thêm cái này
 
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
@@ -13,6 +13,7 @@ import { ShopingCartComponent } from './shoping-cart/shoping-cart.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { ShopComponent } from './shop/shop.component';
 
 
 @NgModule({
@@ -25,14 +26,16 @@ import { RegisterComponent } from './register/register.component';
     ShopingCartComponent,
     CheckoutComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    ShopComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    SlickCarouselModule
+    SlickCarouselModule,
+    FormsModule
   ],
   providers: [],
-  bootstrap: [RegisterComponent]
+  bootstrap: [ShopComponent]
 })
 export class AppModule { }
