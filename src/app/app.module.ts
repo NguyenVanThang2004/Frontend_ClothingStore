@@ -10,6 +10,7 @@ import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
 import { ShopingCartComponent } from './shoping-cart/shoping-cart.component';
+import { CheckoutComponent } from './checkout/checkout.component';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { ShopingCartComponent } from './shoping-cart/shoping-cart.component';
     HeaderComponent,
     FooterComponent,
     ProductDetailComponent,
-    ShopingCartComponent
+    ShopingCartComponent,
+    CheckoutComponent
   ],
   imports: [
     BrowserModule,
@@ -27,6 +29,6 @@ import { ShopingCartComponent } from './shoping-cart/shoping-cart.component';
     SlickCarouselModule
   ],
   providers: [],
-  bootstrap: [ShopingCartComponent]
+  bootstrap: [CheckoutComponent]
 })
 export class AppModule { }
