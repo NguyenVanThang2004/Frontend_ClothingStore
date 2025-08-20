@@ -14,6 +14,7 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ShopComponent } from './shop/shop.component';
+import { BlogComponent } from './blog/blog.component';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { ShopComponent } from './shop/shop.component';
     CheckoutComponent,
     LoginComponent,
     RegisterComponent,
-    ShopComponent
+    ShopComponent,
+    BlogComponent
   ],
   imports: [
     BrowserModule,
@@ -36,6 +38,6 @@ import { ShopComponent } from './shop/shop.component';
     FormsModule
   ],
   providers: [],
-  bootstrap: [ShopComponent]
+  bootstrap: [BlogComponent]
 })
 export class AppModule { }
