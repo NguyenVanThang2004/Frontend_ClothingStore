@@ -1,0 +1,53 @@
+<div class="d-flex" id="adminLayout">
+
+    <!-- Sidebar -->
+    <nav id="sidebar" class="bg-dark text-white vh-100 p-3">
+        <div class="sidebar-header text-center mb-4">
+            🛍️ <strong>Shop Admin</strong>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item mb-2">
+                <a routerLink="admin/" class="nav-link text-white" href="#"><i class="fa fa-home me-2"></i>
+                    Dashboard</a>
+            </li>
+            <li class="nav-item mb-2">
+                <a routerLink="products" class="nav-link text-white" href="#"><i class="fa fa-tshirt me-2"></i>Quản lý
+                    Sản phẩm</a>
+            </li>
+            <li class="nav-item mb-2">
+                <a routerLink="orders" class="nav-link text-white" href="#"><i class="fa fa-shopping-cart me-2"></i>Quản
+                    lý Đơn hàng</a>
+            </li>
+
+            <li class="nav-item mb-2">
+                <a routerLink="users" class="nav-link text-white" href="#"><i class="fa fa-users me-2"></i>Quản lý
+                    Khách hàng</a>
+            </li>
+            <li class="nav-item mb-2">
+                <a routerLink="reports" class="nav-link text-white" href="#"><i class="fa fa-chart-line me-2"></i>
+                    Báo cáo Doanh Thu</a>
+            </li>
+            <li class="nav-item mb-2">
+                <a routerLink="settings" class="nav-link text-white" href="#"><i class="fa fa-tools me-2"></i>
+                    Quản Lý Hệ Thống</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main content -->
+    <div class="flex-grow-1">
+        <!-- Topbar -->
+        <nav class="navbar navbar-light bg-light px-3">
+            <button class="btn btn-outline-secondary" id="sidebarToggle"><i class="fa fa-bars"></i></button>
+            <div class="ms-auto d-flex align-items-center">
+                <span class="me-3">👋 Xin chào, Admin</span>
+                <button class="btn btn-danger"><i class="fa fa-sign-out-alt me-1"></i> Đăng xuất</button>
+            </div>
+        </nav>
+
+        <!-- Content -->
+        <div class="p-3">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>

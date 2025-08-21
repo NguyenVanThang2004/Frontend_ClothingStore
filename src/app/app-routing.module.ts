@@ -11,6 +11,12 @@ import { RegisterComponent } from './components/register/register.component';
 import { BlogDetailComponent } from './components/blog-detail/blog-detail.component';
 import { CheckoutComponent } from './components/checkout/checkout.component';
 import { ProductDetailComponent } from './components/product-detail/product-detail.component';
+import { LayoutAdminComponent } from './components/admin/layout-admin/layout-admin.component';
+import { ProductsComponent } from './components/admin/products/products.component';
+import { SettingsComponent } from './components/admin/settings/settings.component';
+import { UsersComponent } from './components/admin/users/users.component';
+import { OrdersComponent } from './components/admin/orders/orders.component';
+import { ReportsComponent } from './components/admin/reports/reports.component';
 
 
 
@@ -29,6 +35,19 @@ const routes: Routes = [
       { path: 'register', component: RegisterComponent },
       { path: 'checkout', component: CheckoutComponent },
       { path: 'product-detail', component: ProductDetailComponent }
+    ]
+
+
+  },
+  {
+    path: 'admin',
+    component: LayoutAdminComponent,
+    children: [
+      { path: 'products', component: ProductsComponent },
+      { path: 'orders', component: OrdersComponent },
+      { path: 'users', component: UsersComponent },
+      { path: 'settings', component: SettingsComponent },
+      { path: 'reports', component: ReportsComponent }
     ]
   }
 

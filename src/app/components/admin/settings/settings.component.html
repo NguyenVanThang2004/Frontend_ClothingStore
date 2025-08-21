@@ -1,0 +1,115 @@
+<div class="card shadow p-3">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">Quản lý Hệ Thống</h4>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addProductModal">
+            <i class="fa fa-plus"></i> Thêm sản phẩm
+        </button>
+    </div>
+
+    <!-- Table sản phẩm -->
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Mã</th>
+                <th>Tên sản phẩm</th>
+                <th>Giá</th>
+                <th>Tồn kho</th>
+                <th>Danh mục</th>
+                <th>Hình ảnh</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>SP001</td>
+                <td>Áo Thun Nam</td>
+                <td>200.000đ</td>
+                <td>50</td>
+                <td>Áo</td>
+                <td><i class="fa fa-image"></i> 3 ảnh</td>
+                <td>
+                    <button class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
+                    <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+            <tr>
+                <td>SP002</td>
+                <td>Quần Jean Nữ</td>
+                <td>350.000đ</td>
+                <td>30</td>
+                <td>Quần</td>
+                <td><i class="fa fa-image"></i> 2 ảnh</td>
+                <td>
+                    <button class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
+                    <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Thêm/Sửa sản phẩm -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm / Sửa Sản phẩm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row mb-2">
+                        <div class="col-md-6">
+                            <label>Tên sản phẩm</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label>Giá</label>
+                            <input type="number" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-6">
+                            <label>Tồn kho</label>
+                            <input type="number" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label>Danh mục</label>
+                            <select class="form-select">
+                                <option>Áo</option>
+                                <option>Quần</option>
+                                <option>Váy</option>
+                                <option>Phụ kiện</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label>Mô tả</label>
+                        <textarea class="form-control"></textarea>
+                    </div>
+                    <div class="mb-2">
+                        <label>Màu sắc</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label>Kích cỡ</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label>Chất liệu</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label>Hình ảnh</label>
+                        <input type="file" class="form-control" multiple>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button class="btn btn-primary">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { SlickCarouselModule } from 'ngx-slick-carousel';
-import { FormsModule } from '@angular/forms'; // 👈 import thêm cái này
+import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './components/home/home.component';
@@ -18,6 +18,13 @@ import { BlogComponent } from './components/blog/blog.component';
 import { LayoutClientComponent } from './components/layout-client/layout-client.component';
 import { MainComponent } from './main/main.component';
 import { BlogDetailComponent } from './components/blog-detail/blog-detail.component';
+import { LayoutAdminComponent } from './components/admin/layout-admin/layout-admin.component';
+import { ProductsComponent } from './components/admin/products/products.component';
+import { OrdersComponent } from './components/admin/orders/orders.component';
+import { UsersComponent } from './components/admin/users/users.component';
+import { ReportsComponent } from './components/admin/reports/reports.component';
+import { SettingsComponent } from './components/admin/settings/settings.component';
+import { BaseModalComponent } from './shared/base-modal/base-modal.component';
 
 
 
@@ -34,10 +41,16 @@ import { BlogDetailComponent } from './components/blog-detail/blog-detail.compon
     RegisterComponent,
     ShopComponent,
     BlogComponent,
-    LayoutClientComponent,
     MainComponent,
     BlogDetailComponent,
-    LayoutClientComponent
+    LayoutClientComponent,
+    LayoutAdminComponent,
+    ProductsComponent,
+    OrdersComponent,
+    UsersComponent,
+    ReportsComponent,
+    SettingsComponent,
+    BaseModalComponent
   ],
   imports: [
     BrowserModule,
