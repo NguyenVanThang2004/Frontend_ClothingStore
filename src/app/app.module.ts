@@ -15,9 +15,10 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ShopComponent } from './components/shop/shop.component';
 import { BlogComponent } from './components/blog/blog.component';
-import { LayoutsComponent } from './components/layouts/layouts.component';
+import { LayoutClientComponent } from './components/layout-client/layout-client.component';
 import { MainComponent } from './main/main.component';
 import { BlogDetailComponent } from './components/blog-detail/blog-detail.component';
+
 
 
 @NgModule({
@@ -33,9 +34,10 @@ import { BlogDetailComponent } from './components/blog-detail/blog-detail.compon
     RegisterComponent,
     ShopComponent,
     BlogComponent,
-    LayoutsComponent,
+    LayoutClientComponent,
     MainComponent,
-    BlogDetailComponent
+    BlogDetailComponent,
+    LayoutClientComponent
   ],
   imports: [
     BrowserModule,
