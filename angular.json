@@ -139,7 +139,9 @@
               "src/assets/vendor/MagnificPopup/magnific-popup.css",
               "src/assets/vendor/perfect-scrollbar/perfect-scrollbar.css",
               "src/assets/css/util.css",
-              "src/assets/css/main.css"
+              "src/assets/css/main.css",
+              "node_modules/slick-carousel/slick/slick.css",
+              "node_modules/slick-carousel/slick/slick-theme.css"
             ],
             "scripts": [
               "src/assets/vendor/jquery/jquery-3.2.1.min.js",

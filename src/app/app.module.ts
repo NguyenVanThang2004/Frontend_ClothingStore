@@ -5,16 +5,19 @@ import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { FormsModule } from '@angular/forms'; // 👈 import thêm cái này
 
 import { AppRoutingModule } from './app-routing.module';
-import { HomeComponent } from './home/home.component';
-import { HeaderComponent } from './header/header.component';
-import { FooterComponent } from './footer/footer.component';
-import { ProductDetailComponent } from './product-detail/product-detail.component';
-import { ShopingCartComponent } from './shoping-cart/shoping-cart.component';
-import { CheckoutComponent } from './checkout/checkout.component';
-import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
-import { ShopComponent } from './shop/shop.component';
-import { BlogComponent } from './blog/blog.component';
+import { HomeComponent } from './components/home/home.component';
+import { HeaderComponent } from './components/header/header.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { ProductDetailComponent } from './components/product-detail/product-detail.component';
+import { ShopingCartComponent } from './components/shoping-cart/shoping-cart.component';
+import { CheckoutComponent } from './components/checkout/checkout.component';
+import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
+import { ShopComponent } from './components/shop/shop.component';
+import { BlogComponent } from './components/blog/blog.component';
+import { LayoutsComponent } from './components/layouts/layouts.component';
+import { MainComponent } from './main/main.component';
+import { BlogDetailComponent } from './components/blog-detail/blog-detail.component';
 
 
 @NgModule({
@@ -29,7 +32,10 @@ import { BlogComponent } from './blog/blog.component';
     LoginComponent,
     RegisterComponent,
     ShopComponent,
-    BlogComponent
+    BlogComponent,
+    LayoutsComponent,
+    MainComponent,
+    BlogDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -38,6 +44,6 @@ import { BlogComponent } from './blog/blog.component';
     FormsModule
   ],
   providers: [],
-  bootstrap: [BlogComponent]
+  bootstrap: [MainComponent]
 })
 export class AppModule { }
