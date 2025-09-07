@@ -1,8 +1,12 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './components/home/home.component';
@@ -25,7 +29,7 @@ import { UsersComponent } from './components/admin/users/users.component';
 import { ReportsComponent } from './components/admin/reports/reports.component';
 import { SettingsComponent } from './components/admin/settings/settings.component';
 import { BaseModalComponent } from './shared/base-modal/base-modal.component';
-
+import { TokenInterceptor } from './interceptors/token.interceptor';
 
 
 @NgModule({
@@ -56,9 +60,18 @@ import { BaseModalComponent } from './shared/base-modal/base-modal.component';
     BrowserModule,
     AppRoutingModule,
     SlickCarouselModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+    })
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+  ],
   bootstrap: [MainComponent]
 })
 export class AppModule { }

@@ -40,8 +40,9 @@
         <nav class="navbar navbar-light bg-light px-3">
             <button class="btn btn-outline-secondary" id="sidebarToggle"><i class="fa fa-bars"></i></button>
             <div class="ms-auto d-flex align-items-center">
-                <span class="me-3">👋 Xin chào, Admin</span>
-                <button class="btn btn-danger"><i class="fa fa-sign-out-alt me-1"></i> Đăng xuất</button>
+                <span class="me-3">👋 Xin chào,{{ userName}} </span>
+                <button class="btn btn-danger" (click)="logout()"><i class="fa fa-sign-out-alt me-1"></i> Đăng
+                    xuất</button>
             </div>
         </nav>
 

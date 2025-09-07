@@ -2,33 +2,77 @@
     <div class="card shadow-lg p-4 rounded-4" style="max-width: 450px; width: 100%;">
         <h3 class="text-center mb-4">Đăng ký</h3>
 
-        <form>
+        <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)" novalidate>
+            <!-- lỗi chung -->
+            <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
             <!-- Họ tên -->
             <div class="mb-3">
                 <label for="name" class="form-label">Họ và tên</label>
-                <input type="text" id="name" class="form-control" placeholder="Nhập họ tên" required>
+                <input type="text" id="name" class="form-control" placeholder="Nhập họ tên" name="fullname"
+                    [(ngModel)]="fullname" #fullNameCtrl="ngModel" required minlength="2"
+                    [class.is-invalid]="(registerForm.submitted || fullNameCtrl.touched) && fullNameCtrl.invalid" />
+                <small class="text-danger"
+                    *ngIf="(registerForm.submitted || fullNameCtrl.touched) && fullNameCtrl.errors?.['required']">
+                    Họ tên không được để trống
+                </small>
+                <small class="text-danger"
+                    *ngIf="(registerForm.submitted || fullNameCtrl.touched) && fullNameCtrl.errors?.['minlength']">
+                    Họ tên phải có ít nhất 2 ký tự
+                </small>
             </div>
 
             <!-- Số điện thoại -->
             <div class="mb-3">
                 <label for="phone" class="form-label">Số điện thoại</label>
-                <input type="tel" id="phone" class="form-control" placeholder="Nhập số điện thoại" required>
+                <input type="tel" id="phone" class="form-control" placeholder="Nhập số điện thoại" name="phonenumber"
+                    [(ngModel)]="phonenumber" #phoneCtrl="ngModel" required pattern="^0[0-9]{9}$"
+                    [class.is-invalid]="(registerForm.submitted || phoneCtrl.touched) && phoneCtrl.invalid" />
+                <small class="text-danger"
+                    *ngIf="(registerForm.submitted || phoneCtrl.touched) && phoneCtrl.errors?.['required']">
+                    SĐT không được để trống
+                </small>
+                <small class="text-danger"
+                    *ngIf="(registerForm.submitted || phoneCtrl.touched) && phoneCtrl.errors?.['pattern']">
+                    SĐT không hợp lệ (0xxxxxxxxx)
+                </small>
             </div>
 
             <!-- Email -->
             <div class="mb-3">
                 <label for="regEmail" class="form-label">Email</label>
-                <input type="email" id="regEmail" class="form-control" placeholder="Nhập email" required>
+                <input type="email" id="regEmail" class="form-control" placeholder="Nhập email" name="email"
+                    [(ngModel)]="email" #emailCtrl="ngModel" required email
+                    [class.is-invalid]="(registerForm.submitted || emailCtrl.touched) && emailCtrl.invalid" />
+                <small class="text-danger"
+                    *ngIf="(registerForm.submitted || emailCtrl.touched) && emailCtrl.errors?.['required']">
+                    Email không được để trống
+                </small>
+                <small class="text-danger"
+                    *ngIf="(registerForm.submitted || emailCtrl.touched) && emailCtrl.errors?.['email']">
+                    Email không hợp lệ
+                </small>
             </div>
 
             <!-- Mật khẩu -->
             <div class="mb-3">
                 <label for="regPassword" class="form-label">Mật khẩu</label>
-                <input type="password" id="regPassword" class="form-control" placeholder="Tạo mật khẩu" required>
+                <input type="password" id="regPassword" class="form-control" placeholder="Tạo mật khẩu" name="password"
+                    [(ngModel)]="password" #passwordCtrl="ngModel" required minlength="6"
+                    [class.is-invalid]="(registerForm.submitted || passwordCtrl.touched) && passwordCtrl.invalid" />
+                <small class="text-danger"
+                    *ngIf="(registerForm.submitted || passwordCtrl.touched) && passwordCtrl.errors?.['required']">
+                    Mật khẩu không được để trống
+                </small>
+                <small class="text-danger"
+                    *ngIf="(registerForm.submitted || passwordCtrl.touched) && passwordCtrl.errors?.['minlength']">
+                    Mật khẩu tối thiểu 6 ký tự
+                </small>
             </div>
 
-            <!-- Register button -->
-            <button type="submit" class="btn btn-primary w-100 mb-3">Đăng ký</button>
+            <button type="submit" class="btn btn-primary w-100 mb-3" [disabled]="loading">
+                {{ loading ? 'Đang tạo tài khoản...' : 'Đăng ký' }}
+            </button>
         </form>
 
         <div class="text-center mt-3">
