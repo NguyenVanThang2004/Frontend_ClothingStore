@@ -33,8 +33,6 @@ export class AuthService {
         return this.http.post<any>(this.apiLogout, {}, { withCredentials: true });
     }
 
-
-
     getCurrentUserName(): Observable<string> {
         return this.http.get<any>(this.apiAccount).pipe(map(res => res.data.user.name)
         );

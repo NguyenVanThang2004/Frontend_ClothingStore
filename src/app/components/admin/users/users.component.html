@@ -1,115 +1,278 @@
+<!-- users.component.html -->
 <div class="card shadow p-3">
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="mb-0">Quản lý Khách Hàng</h4>
-        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addProductModal">
+        <button class="btn btn-success" (click)="openAdd()">
             <i class="fa fa-plus"></i> Thêm Khách Hàng
         </button>
     </div>
 
-    <!-- Table sản phẩm -->
+    <!-- Table -->
     <table class="table table-bordered table-hover">
         <thead class="thead-dark">
             <tr>
                 <th>Mã</th>
-                <th>Tên sản phẩm</th>
-                <th>Giá</th>
-                <th>Tồn kho</th>
-                <th>Danh mục</th>
-                <th>Hình ảnh</th>
-                <th>Hành động</th>
+                <th>Tên</th>
+                <th>SĐT</th>
+                <th>NGÀY SINH</th>
+                <th>Email</th>
+                <th>ĐỊA CHỈ</th>
+                <th>HOẠT ĐỘNG</th>
+                <th>VAI TRÒ</th>
+                <th>FACEBOOK</th>
+                <th>GOOGLE</th>
+                <th>HÀNH ĐỘNG</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td>SP001</td>
-                <td>Áo Thun Nam</td>
-                <td>200.000đ</td>
-                <td>50</td>
-                <td>Áo</td>
-                <td><i class="fa fa-image"></i> 3 ảnh</td>
+        <tbody *ngIf="!loading; else loadingTpl">
+            <tr *ngFor="let u of users">
+                <td>{{ u.id }}</td>
+                <td>{{ u.fullName }}</td>
+                <td>{{ u.phoneNumber }}</td>
+                <td>{{ u.dateOfBirth || '—' }}</td>
+                <td>{{ u.email }}</td>
+                <td>{{ u.address || '—' }}</td>
+                <td>{{ (u.isActive ?? true) ? '✔' : '✖' }}</td>
+                <td><span class="badge bg-primary">{{ u.role?.name || u.role || '—' }}</span></td>
+                <td>{{ u.facebookLinked ? '✔' : '—' }}</td>
+                <td>{{ u.googleLinked ? '✔' : '—' }}</td>
                 <td>
-                    <button class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
-                    <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
-                </td>
-            </tr>
-            <tr>
-                <td>SP002</td>
-                <td>Quần Jean Nữ</td>
-                <td>350.000đ</td>
-                <td>30</td>
-                <td>Quần</td>
-                <td><i class="fa fa-image"></i> 2 ảnh</td>
-                <td>
-                    <button class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
-                    <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+
+                    <button class="btn btn-primary btn-sm me-1" (click)="openEdit(u)">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm" (click)="remove(u.id)">
+                        <i class="fa fa-trash"></i>
+                    </button>
                 </td>
             </tr>
         </tbody>
+        <ng-template #loadingTpl>
+            <tbody>
+                <tr>
+                    <td colspan="11">Đang tải...</td>
+                </tr>
+            </tbody>
+        </ng-template>
     </table>
 </div>
 
-<!-- Modal Thêm/Sửa sản phẩm -->
-<div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+<!-- Pagination -->
+<div class="d-flex justify-content-between align-items-center mt-2">
+    <div>Tổng: {{ meta.total }} | Trang {{ meta.page }} / {{ meta.pages }}</div>
+    <div class="btn-group">
+        <button class="btn btn-outline-secondary" (click)="prev()" [disabled]="meta.page<=1">«</button>
+        <button class="btn btn-outline-secondary" (click)="next()" [disabled]="meta.page>=meta.pages">»</button>
+    </div>
+</div>
+
+<!-- ADD USER MODAL -->
+<!-- ADD USER MODAL -->
+<div #userAddModal class="modal fade" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Thêm / Sửa Sản phẩm</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="row mb-2">
+            <!-- dùng register-like validation: show error khi submitted hoặc control.touched -->
+            <form (ngSubmit)="saveAdd(addForm)" #addForm="ngForm" novalidate>
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm khách hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" [disabled]="saving"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <!-- Họ tên -->
                         <div class="col-md-6">
-                            <label>Tên sản phẩm</label>
-                            <input type="text" class="form-control">
+                            <label class="form-label">Họ tên</label>
+                            <input class="form-control" name="fullName" [(ngModel)]="formAdd.fullName"
+                                #fullNameAdd="ngModel" required minlength="2"
+                                [class.is-invalid]="(addForm.submitted || fullNameAdd.touched) && fullNameAdd.invalid" />
+                            <small class="text-danger"
+                                *ngIf="(addForm.submitted || fullNameAdd.touched) && fullNameAdd.errors?.['required']">
+                                Họ tên không được để trống
+                            </small>
+                            <small class="text-danger"
+                                *ngIf="(addForm.submitted || fullNameAdd.touched) && fullNameAdd.errors?.['minlength']">
+                                Họ tên phải có ít nhất 2 ký tự
+                            </small>
                         </div>
+
+                        <!-- SĐT -->
                         <div class="col-md-6">
-                            <label>Giá</label>
-                            <input type="number" class="form-control">
+                            <label class="form-label">SĐT</label>
+                            <input class="form-control" name="phoneNumber" [(ngModel)]="formAdd.phoneNumber"
+                                #phoneAdd="ngModel" required pattern="^0[0-9]{9}$"
+                                [class.is-invalid]="(addForm.submitted || phoneAdd.touched) && phoneAdd.invalid" />
+                            <small class="text-danger"
+                                *ngIf="(addForm.submitted || phoneAdd.touched) && phoneAdd.errors?.['required']">
+                                SĐT không được để trống
+                            </small>
+                            <small class="text-danger"
+                                *ngIf="(addForm.submitted || phoneAdd.touched) && phoneAdd.errors?.['pattern']">
+                                SĐT không hợp lệ (0xxxxxxxxx)
+                            </small>
                         </div>
-                    </div>
-                    <div class="row mb-2">
+
+                        <!-- Password -->
                         <div class="col-md-6">
-                            <label>Tồn kho</label>
-                            <input type="number" class="form-control">
+                            <label class="form-label">Mật khẩu</label>
+                            <input type="password" class="form-control" name="password" [(ngModel)]="formAdd.password"
+                                #passwordAdd="ngModel" required minlength="6"
+                                [class.is-invalid]="(addForm.submitted || passwordAdd.touched) && passwordAdd.invalid" />
+                            <small class="text-danger"
+                                *ngIf="(addForm.submitted || passwordAdd.touched) && passwordAdd.errors?.['required']">
+                                Mật khẩu không được để trống
+                            </small>
+                            <small class="text-danger"
+                                *ngIf="(addForm.submitted || passwordAdd.touched) && passwordAdd.errors?.['minlength']">
+                                Mật khẩu tối thiểu 6 ký tự
+                            </small>
                         </div>
+
+                        <!-- Email -->
                         <div class="col-md-6">
-                            <label>Danh mục</label>
-                            <select class="form-select">
-                                <option>Áo</option>
-                                <option>Quần</option>
-                                <option>Váy</option>
-                                <option>Phụ kiện</option>
-                            </select>
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" [(ngModel)]="formAdd.email"
+                                #emailAdd="ngModel" required email
+                                [class.is-invalid]="(addForm.submitted || emailAdd.touched) && emailAdd.invalid" />
+                            <small class="text-danger"
+                                *ngIf="(addForm.submitted || emailAdd.touched) && emailAdd.errors?.['required']">
+                                Email không được để trống
+                            </small>
+                            <small class="text-danger"
+                                *ngIf="(addForm.submitted || emailAdd.touched) && emailAdd.errors?.['email']">
+                                Email không hợp lệ
+                            </small>
+                        </div>
+
+                        <!-- Ngày sinh (tuỳ chọn) -->
+                        <div class="col-md-6">
+                            <label class="form-label">Ngày sinh</label>
+                            <input type="date" class="form-control" name="dateOfBirth"
+                                [(ngModel)]="formAdd.dateOfBirth" />
+                        </div>
+
+                        <!-- Địa chỉ (tuỳ chọn) -->
+                        <div class="col-md-12">
+                            <label class="form-label">Địa chỉ</label>
+                            <input class="form-control" name="address" [(ngModel)]="formAdd.address" />
+                        </div>
+
+                        <!-- Flags -->
+                        <div class="col-md-4">
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" name="isActive"
+                                    [(ngModel)]="formAdd.isActive" />
+                                <label class="form-check-label">Hoạt động</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" name="facebookLinked"
+                                    [(ngModel)]="formAdd.facebookLinked" />
+                                <label class="form-check-label">Facebook linked</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" name="googleLinked"
+                                    [(ngModel)]="formAdd.googleLinked" />
+                                <label class="form-check-label">Google linked</label>
+                            </div>
                         </div>
                     </div>
-                    <div class="mb-2">
-                        <label>Mô tả</label>
-                        <textarea class="form-control"></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal"
+                        [disabled]="saving">Hủy</button>
+                    <button class="btn btn-primary" type="submit" [disabled]="saving || addForm.invalid">
+                        {{ saving ? 'Đang lưu...' : 'Lưu' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- EDIT USER MODAL -->
+<div #userEditModal class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form (ngSubmit)="saveEdit()" #editForm="ngForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sửa khách hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" [disabled]="savingEdit"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Họ tên</label>
+                            <input class="form-control" [(ngModel)]="formEdit.fullName" name="edit_fullname" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">SĐT</label>
+                            <input class="form-control" [(ngModel)]="formEdit.phoneNumber" name="edit_phone" required
+                                disabled="">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" [(ngModel)]="formEdit.email" name="edit_email"
+                                required disabled="">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Ngày sinh</label>
+                            <input type="date" class="form-control" [(ngModel)]="formEdit.dateOfBirth" name="edit_dob"
+                                disabled="">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label">Địa chỉ</label>
+                            <input class="form-control" [(ngModel)]="formEdit.address" name="edit_address">
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" [(ngModel)]="formEdit.isActive"
+                                    name="edit_isActive" disabled="">
+                                <label class="form-check-label">Hoạt động</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" [(ngModel)]="formEdit.facebookLinked"
+                                    name="edit_fb" disabled="">
+                                <label class="form-check-label">Facebook linked</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" [(ngModel)]="formEdit.googleLinked"
+                                    name="edit_gg" disabled="">
+                                <label class="form-check-label">Google linked</label>
+                            </div>
+                        </div>
+
                     </div>
-                    <div class="mb-2">
-                        <label>Màu sắc</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div class="mb-2">
-                        <label>Kích cỡ</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div class="mb-2">
-                        <label>Chất liệu</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div class="mb-2">
-                        <label>Hình ảnh</label>
-                        <input type="file" class="form-control" multiple>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button class="btn btn-primary">Lưu</button>
-            </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal"
+                        [disabled]="savingEdit">Hủy</button>
+                    <button class="btn btn-primary" type="submit" [disabled]="savingEdit || editForm.invalid">
+                        {{ savingEdit ? 'Đang lưu...' : 'Lưu thay đổi' }}
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
