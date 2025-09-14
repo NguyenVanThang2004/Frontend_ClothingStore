@@ -1,5 +1,13 @@
-import { Component, ViewChild } from '@angular/core';
-import { BaseModalComponent } from 'src/app/shared/base-modal/base-modal.component';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
+import { Modal } from 'bootstrap';
+import { CategoryService } from 'src/app/service/category.service';
+import { ProductService } from 'src/app/service/product.service';
+import { ProductImageService } from 'src/app/service/productImage.service';
+import { ProductDTO } from 'src/app/dtos/product';
+import { ProductImageDTO } from 'src/app/dtos/productImage';
+import { ProductVariantDTO } from 'src/app/dtos/productVariant';
+import { ProductVariantService } from 'src/app/service/productVariant.service';
 
 @Component({
   selector: 'app-products',
@@ -8,58 +16,334 @@ import { BaseModalComponent } from 'src/app/shared/base-modal/base-modal.compone
 })
 export class ProductsComponent {
 
-  @ViewChild('addProductModal') addProductModal!: BaseModalComponent;
+  // ------------------------
+  // State & properties
+  // ------------------------
+  products: ProductDTO[] = [];
+  meta = { page: 1, pageSize: 10, pages: 1, total: 0 };
+  loading = false;
+  saving = false;
+  errorMessage = '';
 
-  categories = ['Áo', 'Quần', 'Váy', 'Phụ kiện'];
+  categories: any[] = [];
+  colors = ['BLACK', 'WHITE', 'GRAY', 'BLUE'];
+  sizes = ['S', 'M', 'L', 'XL'];
+  thumbnailIndex = 0;
+  step = 1;
 
-  newProduct: any = {
+  formAdd: any = {
     name: '',
     price: 0,
-    quantity: 0,
-    category: '',
     description: '',
-    image: ''
+    categoryId: 0,
+    images: [] as { url: string; file?: File; id?: number; thumbnail?: boolean }[],
+    variants: [] as ProductVariantDTO[]
   };
 
-  products: any[] = []; // danh sách sản phẩm để hiển thị
+  selectedProduct: ProductDTO | null = null;
+  productImages: ProductImageDTO[] = [];
+  productVariants: ProductVariantDTO[] = [];
 
-  editingIndex: number | null = null; // theo dõi đang sửa hay thêm
+  // ------------------------
+  // Modals
+  // ------------------------
+  @ViewChild('productAddModal') productAddModalRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('productDetailModal') productDetailModalRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('productEditModal') productEditModalRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('variantModal') variantModalRef!: ElementRef<HTMLDivElement>;
 
-  handleAddProduct() {
-    // kiểm tra dữ liệu
-    if (!this.newProduct.name || !this.newProduct.price || !this.newProduct.quantity || !this.newProduct.category) {
-      alert('Vui lòng nhập đầy đủ thông tin sản phẩm!');
+
+
+  addModal!: Modal;
+  detailModal!: Modal;
+  editModal!: Modal;
+  variantModal!: Modal;
+  // ------------------------
+  // Constructor
+  // ------------------------
+  constructor(
+    private categoryService: CategoryService,
+    private productService: ProductService,
+    private productImageService: ProductImageService,
+    private productVariantService: ProductVariantService,
+    private toastr: ToastrService
+  ) { }
+
+  // ------------------------
+  // Lifecycle
+  // ------------------------
+  ngOnInit() {
+    this.load(1);
+    this.categoryService.getCategory().subscribe({
+      next: (cats) => (this.categories = cats),
+      error: () => (this.categories = [])
+    });
+  }
+
+  ngAfterViewInit() {
+    this.addModal = new Modal(this.productAddModalRef.nativeElement, { backdrop: 'static', keyboard: false });
+    this.detailModal = new Modal(this.productDetailModalRef.nativeElement, { backdrop: 'static', keyboard: false });
+    this.editModal = new Modal(this.productEditModalRef.nativeElement, { backdrop: 'static', keyboard: false });
+    this.variantModal = new Modal(this.variantModalRef.nativeElement, { backdrop: 'static', keyboard: false });
+  }
+
+  // ------------------------
+  // Pagination & loading
+  // ------------------------
+  load(page: number) {
+    this.loading = true;
+    this.errorMessage = '';
+    this.productService.getProducts(page, this.meta.pageSize).subscribe({
+      next: ({ products, meta }) => {
+        this.products = products;
+        this.meta = meta;
+        this.loading = false;
+      },
+      error: () => (this.loading = false)
+    });
+  }
+
+  prev() { if (this.meta.page > 1) this.load(this.meta.page - 1); }
+  next() { if (this.meta.page < this.meta.pages) this.load(this.meta.page + 1); }
+
+  // ------------------------
+  // Add product
+  // ------------------------
+  openAdd() {
+    this.formAdd = { name: '', price: 0, description: '', categoryId: 0, images: [], variants: [] };
+    this.thumbnailIndex = 0;
+    this.step = 1;
+    this.addModal.show();
+  }
+
+  nextStep(form: any) {
+    if (this.step === 1 && form.invalid) {
+      this.toastr.warning('Vui lòng nhập đầy đủ thông tin sản phẩm');
+      return;
+    }
+    if (this.step < 2) this.step++;
+  }
+
+  prevStep() {
+    if (this.step > 1) this.step--;
+  }
+
+  onFilesSelected(event: any) {
+    const files: FileList = event.target.files;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.formAdd.images.push({ url: e.target.result, file });
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  saveAll() {
+
+    if (this.formAdd.images.length === 0) {
+      this.toastr.error('Vui lòng chọn ít nhất 1 ảnh sản phẩm');
       return;
     }
 
-    if (this.editingIndex !== null) {
-      // đang sửa sản phẩm
-      this.products[this.editingIndex] = { ...this.newProduct };
-      alert('Sửa sản phẩm thành công!');
+    this.saving = true;
+
+    const productPayload: Partial<ProductDTO> = {
+      name: this.formAdd.name,
+      price: this.formAdd.price,
+      description: this.formAdd.description,
+      category: { id: Number(this.formAdd.categoryId) }
+    };
+
+    this.productService.createProduct(productPayload as ProductDTO).subscribe({
+      next: (createdProduct: ProductDTO) => {
+        const productId = createdProduct.id;
+
+        // Upload ảnh
+        const files: File[] = this.formAdd.images.map((img: any) => img.file).filter((f: File) => !!f);
+        if (files.length > 0) {
+          this.productImageService.uploadImages(productId, files).subscribe({
+            next: (imgs: ProductImageDTO[]) => {
+              const thumb = imgs[this.thumbnailIndex];
+              if (thumb) {
+                this.productImageService.setThumbnail(thumb.id!).subscribe();
+              }
+            },
+            error: () => this.toastr.error('Upload ảnh thất bại')
+          });
+        }
+
+        this.toastr.success('Thêm sản phẩm thành công!');
+        this.saving = false;
+        this.addModal.hide();
+        this.load(this.meta.page);
+      },
+      error: () => {
+        this.toastr.error('Không tạo được sản phẩm');
+        this.saving = false;
+      }
+    });
+  }
+
+  // ------------------------
+  // Detail product
+  // ------------------------
+  openDetail(product: ProductDTO) {
+    this.selectedProduct = product;
+
+    this.productImageService.listImages(product.id).subscribe({
+      next: (imgs) => (this.productImages = imgs),
+      error: () => (this.productImages = [])
+    });
+    this.productVariantService.getVariantByProductId(product.id).subscribe({
+      next: (variants) => (this.productVariants = variants ?? []),
+      error: () => (this.productVariants = [])
+    });
+
+
+    // TODO: load variants khi có API
+    this.detailModal.show();
+  }
+
+  // ------------------------
+  // EDIT product
+  // ------------------------
+  editingId: number | null = null;
+  formEdit: { name: string; price: number; description: string; categoryId: number } = {
+    name: '', price: 0, description: '', categoryId: 0
+  };
+  openEdit(p: ProductDTO) {
+    if (!p?.id) return;
+    this.editingId = p.id;
+    this.formEdit = {
+      name: p.name ?? '',
+      price: Number(p.price) || 0,
+      description: p.description ?? '',
+      categoryId: p.category?.id ?? 0
+    };
+    this.editModal.show();
+  }
+
+  saveEdit(form: any) {
+    if (!this.editingId) return;
+    if (form.invalid || !this.formEdit.categoryId) {
+      this.toastr.warning('Vui lòng nhập đầy đủ thông tin hợp lệ');
+      return;
+    }
+
+    const payload: Partial<ProductDTO> = {
+      name: this.formEdit.name,
+      price: this.formEdit.price,
+      description: this.formEdit.description,
+      category: { id: Number(this.formEdit.categoryId) }
+    };
+
+    this.saving = true;
+    this.productService.updateProduct(this.editingId, payload).subscribe({
+      next: () => {
+        this.toastr.success('Cập nhật sản phẩm thành công');
+        this.saving = false;
+        this.editModal.hide();
+
+        // Cách 1: reload trang hiện tại
+        this.load(this.meta.page);
+
+        // (Tuỳ chọn) Cách 2: cập nhật tại chỗ không reload:
+        // const idx = this.products.findIndex(x => x.id === this.editingId);
+        // if (idx > -1) {
+        //   this.products[idx] = {
+        //     ...this.products[idx],
+        //     name: payload.name!,
+        //     price: payload.price!,
+        //     description: payload.description!,
+        //     category: { id: this.formEdit.categoryId, name: this.categories.find(c => c.id===this.formEdit.categoryId)?.name }
+        //   } as any;
+        // }
+      },
+      error: () => {
+        this.saving = false;
+        this.toastr.error('Cập nhật thất bại');
+      }
+    });
+  }
+
+  // ------------------------
+  // delete product
+  // ------------------------
+  openDelete() {
+    alert("hiện tại chưa thể xóa được sản phẩm")
+  }
+
+  // ------------------------
+  // variant product
+  // ------------------------
+  variantFormModel: Partial<ProductVariantDTO> = { color: 'BLACK', size: 'S', price: 0, stockQuantity: 0 };
+  variantEditingId: number | null = null;
+  openVariants(p: ProductDTO) {
+    this.selectedProduct = p;
+    this.productVariantService.getVariantByProductId(p.id).subscribe({
+      next: (variants) => (this.productVariants = variants ?? []),
+      error: () => (this.productVariants = [])
+    });
+    this.variantFormModel = { color: 'BLACK', size: 'S', price: 0, stockQuantity: 0 };
+    this.variantEditingId = null;
+    this.variantModal.show();
+  }
+
+  openVariantEdit(v: ProductVariantDTO) {
+    this.variantEditingId = v.id!;
+    this.variantFormModel = { ...v };
+  }
+
+  saveVariant() {
+    if (!this.selectedProduct) return;
+    const productId = this.selectedProduct.id;
+
+    if (this.variantEditingId) {
+      // UPDATE
+      const payload = {
+        price: this.variantFormModel.price!,
+        stockQuantity: this.variantFormModel.stockQuantity!
+      };
+
+      this.productVariantService.updateVariant(productId, this.variantEditingId, payload)
+        .subscribe({
+          next: (updated) => {
+            this.toastr.success('Cập nhật biến thể thành công');
+            const idx = this.productVariants.findIndex(x => x.id === this.variantEditingId);
+            if (idx > -1) {
+              this.productVariants[idx] = {
+                ...this.productVariants[idx],  // giữ color & size
+                ...updated                     // cập nhật price & stockQuantity
+              };
+            }
+            this.variantEditingId = null;
+          },
+          error: () => this.toastr.error('Cập nhật biến thể thất bại')
+        });
+
     } else {
-      // thêm mới
-      this.products.push({ ...this.newProduct });
-      alert('Thêm sản phẩm thành công!');
-    }
+      // CREATE
+      const payload = {
+        color: this.variantFormModel.color!,
+        size: this.variantFormModel.size!,
+        price: this.variantFormModel.price!,
+        stockQuantity: this.variantFormModel.stockQuantity!,
+        product: { id: productId }
+      };
 
-    // reset form
-    this.newProduct = { name: '', price: 0, quantity: 0, category: '', description: '', image: '' };
-    this.editingIndex = null;
-
-    // đóng modal
-    this.addProductModal.closeModal();
-  }
-
-  editProduct(index: number) {
-    this.editingIndex = index;
-    this.newProduct = { ...this.products[index] };
-    this.addProductModal.openModal();
-    alert('sửa sản phẩm thành công!');
-  }
-
-  deleteProduct(index: number) {
-    if (confirm('Bạn có chắc muốn xóa sản phẩm này không?')) {
-      this.products.splice(index, 1);
+      this.productVariantService.createVariant(payload as any)
+        .subscribe({
+          next: (created) => {
+            this.toastr.success('Thêm biến thể thành công');
+            this.productVariants.push(created); // BE trả đủ data rồi
+            this.variantFormModel = { color: 'BLACK', size: 'S', price: 0, stockQuantity: 0 };
+          },
+          error: () => this.toastr.error('Thêm biến thể thất bại')
+        });
     }
   }
+
+
 }
