@@ -5,8 +5,15 @@ export interface ProductDTO {
     name: string;
     price: number;
     description: string;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
     category: CategoryDTO;
 
+}
+
+export interface ProductPayload {
+    name: string;
+    price: number;
+    description: string;
+    categoryId: number;
 }

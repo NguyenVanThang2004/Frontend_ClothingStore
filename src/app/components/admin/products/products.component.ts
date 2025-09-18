@@ -4,7 +4,7 @@ import { Modal } from 'bootstrap';
 import { CategoryService } from 'src/app/service/category.service';
 import { ProductService } from 'src/app/service/product.service';
 import { ProductImageService } from 'src/app/service/productImage.service';
-import { ProductDTO } from 'src/app/dtos/product';
+import { ProductDTO, ProductPayload } from 'src/app/dtos/product';
 import { ProductImageDTO } from 'src/app/dtos/productImage';
 import { ProductVariantDTO } from 'src/app/dtos/productVariant';
 import { ProductVariantService } from 'src/app/service/productVariant.service';
@@ -141,7 +141,6 @@ export class ProductsComponent {
   }
 
   saveAll() {
-
     if (this.formAdd.images.length === 0) {
       this.toastr.error('Vui lòng chọn ít nhất 1 ảnh sản phẩm');
       return;
@@ -149,28 +148,41 @@ export class ProductsComponent {
 
     this.saving = true;
 
-    const productPayload: Partial<ProductDTO> = {
+    const productPayload: ProductPayload = {
       name: this.formAdd.name,
       price: this.formAdd.price,
       description: this.formAdd.description,
-      category: { id: Number(this.formAdd.categoryId) }
+      categoryId: Number(this.formAdd.categoryId)
     };
 
-    this.productService.createProduct(productPayload as ProductDTO).subscribe({
+    this.productService.createProduct(productPayload).subscribe({
       next: (createdProduct: ProductDTO) => {
+        console.log('Created product:', createdProduct);
+
         const productId = createdProduct.id;
+        if (!productId) {
+          this.toastr.error('Không nhận được ID sản phẩm từ server');
+          this.saving = false;
+          return;
+        }
 
         // Upload ảnh
-        const files: File[] = this.formAdd.images.map((img: any) => img.file).filter((f: File) => !!f);
+        const files: File[] = this.formAdd.images
+          .map((img: any) => img.file)
+          .filter((f: File) => !!f);
+
         if (files.length > 0) {
           this.productImageService.uploadImages(productId, files).subscribe({
             next: (imgs: ProductImageDTO[]) => {
               const thumb = imgs[this.thumbnailIndex];
-              if (thumb) {
-                this.productImageService.setThumbnail(thumb.id!).subscribe();
+              if (thumb?.id) {
+                this.productImageService.setThumbnail(thumb.id).subscribe();
               }
             },
-            error: () => this.toastr.error('Upload ảnh thất bại')
+            error: (err) => {
+              console.error('Upload ảnh lỗi:', err);
+              this.toastr.error('Upload ảnh thất bại');
+            }
           });
         }
 
@@ -179,12 +191,14 @@ export class ProductsComponent {
         this.addModal.hide();
         this.load(this.meta.page);
       },
-      error: () => {
+      error: (err) => {
+        console.error('Create product error:', err);
         this.toastr.error('Không tạo được sản phẩm');
         this.saving = false;
       }
     });
   }
+
 
   // ------------------------
   // Detail product
@@ -232,15 +246,15 @@ export class ProductsComponent {
       return;
     }
 
-    const payload: Partial<ProductDTO> = {
-      name: this.formEdit.name,
-      price: this.formEdit.price,
-      description: this.formEdit.description,
-      category: { id: Number(this.formEdit.categoryId) }
+    const productPayload: ProductPayload = {
+      name: this.formAdd.name,
+      price: this.formAdd.price,
+      description: this.formAdd.description,
+      categoryId: Number(this.formAdd.categoryId)
     };
 
     this.saving = true;
-    this.productService.updateProduct(this.editingId, payload).subscribe({
+    this.productService.updateProduct(this.editingId, productPayload).subscribe({
       next: () => {
         this.toastr.success('Cập nhật sản phẩm thành công');
         this.saving = false;

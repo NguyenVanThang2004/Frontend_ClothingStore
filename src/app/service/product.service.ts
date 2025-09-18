@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../environments/environments';
 import { map, Observable } from 'rxjs';
-import { ProductDTO } from '../dtos/product';
+import { ProductDTO, ProductPayload } from '../dtos/product';
 
 
 
@@ -36,18 +36,14 @@ export class ProductService {
         );
     }
 
-    // Tạo mới sản phẩm
-    createProduct(product: ProductDTO): Observable<any> {
-        return this.http.post<any>(this.apiProduct, product).pipe(
-            map(res => res.data)
-        );
+    createProduct(payload: ProductPayload): Observable<ProductDTO> {
+        return this.http.post<{ data: ProductDTO }>(`${this.apiProduct}`, payload)
+            .pipe(map(res => res.data));
     }
 
-    // Cập nhật sản phẩm
-    updateProduct(id: number, product: Partial<ProductDTO>): Observable<any> {
-        return this.http.put<any>(`${this.apiProduct}/${id}`, product).pipe(
-            map(res => res.data)
-        );
+
+    updateProduct(id: number, payload: ProductPayload): Observable<ProductDTO> {
+        return this.http.put<ProductDTO>(`${this.apiProduct}/${id}`, payload);
     }
 
     // Xóa sản phẩm
