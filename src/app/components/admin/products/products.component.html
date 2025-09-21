@@ -31,8 +31,9 @@
                 <td>{{ p.name }}</td>
                 <td>{{ p.price }}</td>
                 <td>{{ p.category.name }}</td>
-                <td>{{ ((p.createdAt ?? p.createdAt) | date:'dd/MM/yyyy HH:mm:ss':'Asia/Bangkok') ?? '—' }}</td>
-                <td>{{ ((p.updatedAt ?? p.updatedAt) | date:'dd/MM/yyyy HH:mm:ss':'Asia/Bangkok') ?? '—' }}</td>
+                <td>{{ ((p.createdAt) | date:'dd/MM/yyyy HH:mm:ss':'Asia/Bangkok') ?? '—' }}</td>
+                <td>{{ p.updatedAt ? (p.updatedAt | date:'dd/MM/yyyy HH:mm:ss':'Asia/Bangkok') : '—' }}</td>
+
 
 
                 <td>
@@ -180,7 +181,7 @@
                         <strong>Giá gốc:</strong> {{ selectedProduct.price | number }} đ
                     </div>
                     <div class="col-md-12">
-                        <strong>Danh mục:</strong> {{ selectedProduct.category?.name }}
+                        <strong>Danh mục:</strong> {{ selectedProduct.category.name }}
                     </div>
                     <div class="col-md-12 mt-2">
                         <strong>Mô tả:</strong>
@@ -262,6 +263,7 @@
                                 <option [ngValue]="0">-- Chọn --</option>
                                 <option *ngFor="let cat of categories" [ngValue]="cat.id">{{ cat.name }}</option>
                             </select>
+
                             <div class="text-danger small" *ngIf="editForm.submitted && !formEdit.categoryId">Bắt buộc
                             </div>
                         </div>

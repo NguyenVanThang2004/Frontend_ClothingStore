@@ -234,7 +234,7 @@ export class ProductsComponent {
       name: p.name ?? '',
       price: Number(p.price) || 0,
       description: p.description ?? '',
-      categoryId: p.category?.id ?? 0
+      categoryId: p.category?.id ? Number(p.category.id) : 0
     };
     this.editModal.show();
   }
@@ -247,10 +247,10 @@ export class ProductsComponent {
     }
 
     const productPayload: ProductPayload = {
-      name: this.formAdd.name,
-      price: this.formAdd.price,
-      description: this.formAdd.description,
-      categoryId: Number(this.formAdd.categoryId)
+      name: this.formEdit.name,
+      price: this.formEdit.price,
+      description: this.formEdit.description,
+      categoryId: Number(this.formEdit.categoryId)
     };
 
     this.saving = true;
@@ -327,12 +327,17 @@ export class ProductsComponent {
             this.toastr.success('Cập nhật biến thể thành công');
             const idx = this.productVariants.findIndex(x => x.id === this.variantEditingId);
             if (idx > -1) {
+              // cập nhật lại phần tử và ép Angular re-render
               this.productVariants[idx] = {
-                ...this.productVariants[idx],  // giữ color & size
-                ...updated                     // cập nhật price & stockQuantity
+                ...this.productVariants[idx],
+                ...updated
               };
+              this.productVariants = [...this.productVariants];
             }
+
+            // reset form
             this.variantEditingId = null;
+            this.variantFormModel = { color: 'BLACK', size: 'S', price: 0, stockQuantity: 0 };
           },
           error: () => this.toastr.error('Cập nhật biến thể thất bại')
         });
@@ -351,13 +356,19 @@ export class ProductsComponent {
         .subscribe({
           next: (created) => {
             this.toastr.success('Thêm biến thể thành công');
-            this.productVariants.push(created); // BE trả đủ data rồi
+
+            // thêm mới và ép Angular render lại
+            this.productVariants = [...this.productVariants, created];
+
+            // reset form
             this.variantFormModel = { color: 'BLACK', size: 'S', price: 0, stockQuantity: 0 };
+            this.variantEditingId = null;
           },
           error: () => this.toastr.error('Thêm biến thể thất bại')
         });
     }
   }
+
 
 
 }
