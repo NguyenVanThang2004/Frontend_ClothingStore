@@ -2,8 +2,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { RegisterDTO } from '../dtos/user/register.dto';
-import { LoginDTO } from '../dtos/user/login.dto';
 import { environment } from '../environments/environments';
 import { ReqOrderDTO, ReqUpdateOrderStatusDTO, ResOrderDTO } from '../dtos/order';
 
@@ -34,4 +32,26 @@ export class OrderService {
     ): Observable<ResOrderDTO> {
         return this.http.put<ResOrderDTO>(`${this.apiOrder}/${id}`, req);
     }
+    filterOrders(status: string | null, page: number, pageSize: number): Observable<{ orders: any[]; meta: any }> {
+        let params = new HttpParams()
+            .set('page', String(page - 1))
+            .set('size', String(pageSize));
+        if (status) {
+            params = params.set('status', status);
+        }
+
+        return this.http.get<any>(`${this.apiOrder}/filter`, { params }).pipe(
+            map(res => ({
+                orders: res.data.content,
+                meta: {
+                    page: res.data.number + 1,
+                    pageSize: res.data.size,
+                    total: res.data.totalElements,
+                    pages: res.data.totalPages
+                }
+            }))
+        );
+    }
+
+
 }

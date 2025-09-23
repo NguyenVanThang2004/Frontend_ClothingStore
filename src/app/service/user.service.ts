@@ -45,5 +45,31 @@ export class UserService {
         return this.http.delete<any>(`${this.apiUser}/${id}`);
     }
 
+    searchUsers(keyword: string | null, role: string | null, page = 1, pageSize = 10): Observable<{ users: any[]; meta: any }> {
+        let params = new HttpParams()
+            .set('page', String(page - 1))
+            .set('size', String(pageSize));
+
+        if (keyword) {
+            params = params.set('keyword', keyword);
+        }
+        if (role) {
+            params = params.set('role', role);
+        }
+
+        return this.http.get<any>(`${this.apiUser}/search`, { params }).pipe(
+            map(res => ({
+                users: res.data.content,
+                meta: {
+                    page: res.data.number + 1,
+                    pageSize: res.data.size,
+                    total: res.data.totalElements,
+                    pages: res.data.totalPages
+                }
+            }))
+        );
+    }
+
+
 
 }

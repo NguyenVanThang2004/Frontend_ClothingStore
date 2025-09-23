@@ -37,6 +37,11 @@ export class AuthService {
         return this.http.get<any>(this.apiAccount).pipe(map(res => res.data.user.name)
         );
     }
+    getCurrentUser(): Observable<any> {
+        return this.http.get<any>(this.apiAccount);
+
+    }
+
 
 
 

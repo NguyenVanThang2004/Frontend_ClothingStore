@@ -17,6 +17,8 @@ import { SettingsComponent } from './components/admin/settings/settings.componen
 import { UsersComponent } from './components/admin/users/users.component';
 import { OrdersComponent } from './components/admin/orders/orders.component';
 import { ReportsComponent } from './components/admin/reports/reports.component';
+import { ProfileComponent } from './components/profile/profile.component'
+import { MyOrdersComponent } from './components/my-order/my-order.component';
 
 
 
@@ -34,7 +36,10 @@ const routes: Routes = [
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
       { path: 'checkout', component: CheckoutComponent },
-      { path: 'product-detail', component: ProductDetailComponent }
+      { path: 'product-detail/:id', component: ProductDetailComponent },
+      { path: 'profile', component: ProfileComponent },
+      { path: 'my-order', component: MyOrdersComponent }
+
     ]
 
 

@@ -53,6 +53,51 @@ export class ProductService {
         );
     }
 
+    getProductsFiltered(params: {
+        page?: number;
+        size?: number;
+        categoryId?: number | null;
+        priceMin?: number | null;
+        priceMax?: number | null;
+        sort?: string | null;
+        keyword?: string | null;
+    }): Observable<{ products: any[]; meta: any }> {
+        let httpParams = new HttpParams()
+            .set('page', String((params.page ?? 1) - 1)) // Spring 0-based
+            .set('size', String(params.size ?? 12));
+
+        if (params.categoryId != null) {
+            httpParams = httpParams.set('categoryId', String(params.categoryId));
+        }
+        if (params.priceMin != null) {
+            httpParams = httpParams.set('priceMin', String(params.priceMin));
+        }
+        if (params.priceMax != null) {
+            httpParams = httpParams.set('priceMax', String(params.priceMax));
+        }
+        if (params.sort) {
+            httpParams = httpParams.set('sort', params.sort);
+        }
+        if (params.keyword) {
+            httpParams = httpParams.set('keyword', params.keyword);
+        }
+
+
+        return this.http.get<any>(`${this.apiProduct}/filter`, { params: httpParams }).pipe(
+            map(res => ({
+                products: res.data.content,    // 👈 lấy trong data
+                meta: {
+                    page: res.data.number + 1,   // Spring trả 0-based, FE dùng 1-based
+                    pageSize: res.data.size,
+                    total: res.data.totalElements,
+                    pages: res.data.totalPages
+                }
+            }))
+        );
+    }
+
+
+
 
 
 }

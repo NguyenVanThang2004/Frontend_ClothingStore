@@ -23,6 +23,7 @@ export class OrdersComponent {
   editModal!: Modal;
 
   selectedOrder: ResOrderDTO | null = null;
+  selectedStatus: string = '';
   newStatus: string = '';
 
   statusOptions = ['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
@@ -40,14 +41,30 @@ export class OrdersComponent {
 
   load(page: number) {
     this.loading = true;
-    this.orderService.getOrders(page, this.meta.pageSize).subscribe({
-      next: ({ orders, meta }) => {
-        this.orders = orders;
-        this.meta = { ...meta, pages: Math.ceil(meta.total / meta.pageSize) };
-        this.loading = false;
-      },
-      error: () => { this.loading = false; this.toastr.error('Không tải được đơn hàng'); }
-    });
+    if (this.selectedStatus) {
+      this.orderService.filterOrders(this.selectedStatus, page, this.meta.pageSize).subscribe({
+        next: ({ orders, meta }) => {
+          this.orders = orders;
+          this.meta = { ...meta, pages: Math.ceil(meta.total / meta.pageSize) };
+          this.loading = false;
+        },
+        error: () => { this.loading = false; this.toastr.error('Không tải được đơn hàng'); }
+      });
+    } else {
+      this.orderService.getOrders(page, this.meta.pageSize).subscribe({
+        next: ({ orders, meta }) => {
+          this.orders = orders;
+          this.meta = { ...meta, pages: Math.ceil(meta.total / meta.pageSize) };
+          this.loading = false;
+        },
+        error: () => { this.loading = false; this.toastr.error('Không tải được đơn hàng'); }
+      });
+    }
+  }
+
+  onStatusChange(e: any) {
+    this.selectedStatus = e.target.value;
+    this.load(1);
   }
 
   prev() { if (this.meta.page > 1) this.load(this.meta.page - 1); }

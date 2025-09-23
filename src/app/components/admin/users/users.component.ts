@@ -50,6 +50,11 @@ export class UsersComponent implements OnInit, AfterViewInit {
     googleLinked: false,
   };
 
+  keyword: string = '';
+  selectedRole: string = '';
+  roles = ['ADMIN', 'USER']; // tùy enum BE
+
+
   constructor(
     private userService: UserService,
     private toastr: ToastrService
@@ -65,11 +70,41 @@ export class UsersComponent implements OnInit, AfterViewInit {
   load(page: number) {
     this.loading = true;
     this.errorMessage = '';
-    this.userService.getUsers(page, this.meta.pageSize).subscribe({
-      next: ({ users, meta }) => { this.users = users; this.meta = meta; this.loading = false; },
-      error: () => { this.loading = false; }
-    });
+
+    // Nếu có keyword hoặc role thì gọi search
+    if (this.keyword || this.selectedRole) {
+      this.userService.searchUsers(this.keyword, this.selectedRole, page, this.meta.pageSize).subscribe({
+        next: ({ users, meta }) => {
+          this.users = users;
+          this.meta = meta;
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+          this.toastr.error('Không tải được danh sách user');
+        }
+      });
+    } else {
+      // Ngược lại thì gọi getAll
+      this.userService.getUsers(page, this.meta.pageSize).subscribe({
+        next: ({ users, meta }) => {
+          this.users = users;
+          this.meta = meta;
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+          this.toastr.error('Không tải được danh sách user');
+        }
+      });
+    }
   }
+
+  applyFilter() {
+    this.load(1); // luôn về trang 1
+  }
+
+
 
   prev() { if (this.meta.page > 1) this.load(this.meta.page - 1); }
   next() { if (this.meta.page < this.meta.pages) this.load(this.meta.page + 1); }

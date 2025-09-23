@@ -1,0 +1,47 @@
+<div class="container py-5">
+    <h2 class="mb-4">Thông tin cá nhân</h2>
+
+    <div class="card shadow-sm rounded-3">
+        <div class="card-body">
+            <form #profileForm="ngForm" (ngSubmit)="updateProfile(profileForm)">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Họ và tên</label>
+                        <input type="text" [(ngModel)]="user.fullName" name="fullName" class="form-control" required
+                            minlength="2" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" [(ngModel)]="user.email" name="email" class="form-control" disabled />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Số điện thoại</label>
+                        <input type="text" [(ngModel)]="user.phoneNumber" name="phoneNumber" class="form-control"
+                            disabled />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Địa chỉ</label>
+                        <input type="text" [(ngModel)]="user.address" name="address" class="form-control" required />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Ngày sinh</label>
+                        <input type="date" [(ngModel)]="user.dateOfBirth" name="dateOfBirth" class="form-control"
+                            disabled />
+                    </div>
+                </div>
+
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid">
+                        Cập nhật
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

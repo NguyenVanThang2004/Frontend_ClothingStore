@@ -30,6 +30,9 @@ export class ProductsComponent {
   sizes = ['S', 'M', 'L', 'XL'];
   thumbnailIndex = 0;
   step = 1;
+  selectedCategoryId: number | null = null;
+  keyword: string = '';
+
 
   formAdd: any = {
     name: '',
@@ -93,15 +96,28 @@ export class ProductsComponent {
   load(page: number) {
     this.loading = true;
     this.errorMessage = '';
-    this.productService.getProducts(page, this.meta.pageSize).subscribe({
+    this.productService.getProductsFiltered({
+      page,
+      size: this.meta.pageSize,
+      categoryId: this.selectedCategoryId,
+      keyword: this.keyword
+    }).subscribe({
       next: ({ products, meta }) => {
         this.products = products;
         this.meta = meta;
         this.loading = false;
       },
-      error: () => (this.loading = false)
+      error: () => {
+        this.loading = false;
+        this.toastr.error('Không tải được sản phẩm');
+      }
     });
   }
+  applyFilter() {
+    this.load(1);  // reset về trang 1 khi đổi filter
+  }
+
+
 
   prev() { if (this.meta.page > 1) this.load(this.meta.page - 1); }
   next() { if (this.meta.page < this.meta.pages) this.load(this.meta.page + 1); }

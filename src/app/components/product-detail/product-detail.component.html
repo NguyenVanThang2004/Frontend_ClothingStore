@@ -1,3 +1,4 @@
+<!-- breadcrumb -->
 <div class="container">
     <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
         <a href="index.html" class="stext-109 cl8 hov-cl1 trans-04">
@@ -5,116 +6,107 @@
             <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
         </a>
 
-        <a href="product.html" class="stext-109 cl8 hov-cl1 trans-04">
-            Men
-            <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
-        </a>
-
         <span class="stext-109 cl4">
-            Lightweight Jacket
+            Product Details
         </span>
     </div>
 </div>
-
-
 <!-- Product Detail -->
 <section class="sec-product-detail bg0 p-t-65 p-b-60">
     <div class="container">
         <div class="row">
             <div class="col-md-6 col-lg-7 p-b-30">
-                <ngx-slick-carousel class="carousel" #slickModal="slick-carousel" [config]="slideConfig">
-
-                    <div ngxSlickItem *ngFor="let slide of slides" class="slide wrap-pic-w pos-relative">
-                        <img [src]="slide.img" alt="IMG-PRODUCT">
-
-                        <!-- nút phóng to -->
-                        <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" [href]="slide.img">
+                <ngx-slick-carousel class="carousel" [config]="slideConfig">
+                    <div ngxSlickItem *ngFor="let img of images" class="slide wrap-pic-w pos-relative">
+                        <img [src]="img.url" alt="IMG-PRODUCT">
+                        <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" [href]="img.url">
                             <i class="fa fa-expand"></i>
                         </a>
                     </div>
-
                 </ngx-slick-carousel>
+
             </div>
 
 
             <div class="col-md-6 col-lg-5 p-b-30">
                 <div class="p-r-50 p-t-5 p-lr-0-lg">
                     <h4 class="mtext-105 cl2 js-name-detail p-b-14">
-                        Lightweight Jacket
+                        {{ product.name }}
                     </h4>
 
                     <span class="mtext-106 cl2">
-                        $58.79
+                        {{ product.price | number:'1.0-0' }} đ
                     </span>
 
                     <p class="stext-102 cl3 p-t-23">
-                        Nulla eget sem vitae eros pharetra viverra. Nam vitae luctus ligula. Mauris consequat ornare
-                        feugiat.
+                        {{ product.description }}
                     </p>
+
 
                     <!--  -->
                     <div class="p-t-33">
 
-                        <div class="flex-w flex-r-m p-b-10">
-                            <div class="size-203 flex-c-m respon6 flex-fill">
-                                Size
-                            </div>
-
-                            <div class="size-204 respon6-next flex-fill">
-                                <div class="bor8 bg0 custom-select-wrapper">
-                                    <select class="custom-select w-100" name="size">
-                                        <option value="" disabled selected>Choose a size</option>
-                                        <option value="S">Size S</option>
-                                        <option value="M">Size M</option>
-                                        <option value="L">Size L</option>
-                                        <option value="XL">Size XL</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex-w flex-r-m p-b-10">
-                            <div class="size-203 flex-c-m respon6 flex-fill">
-                                Color
-                            </div>
-
-                            <div class="size-204 respon6-next flex-fill">
-                                <div class="bor8 bg0 custom-select-wrapper">
-                                    <select class="custom-select w-100" name="color">
-                                        <option value="" disabled selected>Choose a color</option>
-                                        <option value="Red">Red</option>
-                                        <option value="Blue">Blue</option>
-                                        <option value="White">White</option>
-                                        <option value="Grey">Grey</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-
-
-
-                        <div class="flex-w flex-r-m p-b-10">
-                            <div class="size-204 flex-w flex-m respon6-next">
-                                <div class="wrap-num-product flex-w m-r-20 m-tb-10">
-                                    <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-                                        <i class="fs-16 zmdi zmdi-minus"></i>
-                                    </div>
-
-                                    <input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product"
-                                        value="1">
-
-                                    <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-                                        <i class="fs-16 zmdi zmdi-plus"></i>
-                                    </div>
-                                </div>
-
-                                <button
-                                    class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
-                                    Add to cart
+                        <!-- Size -->
+                        <label class="d-block mb-2">Chọn Size:</label>
+                        <div class="row g-2 mb-3">
+                            <div class="col-3" *ngFor="let s of sizes">
+                                <button type="button" class="btn w-100" [disabled]="!isSizeAvailableForColor(s)"
+                                    [ngClass]="selectedSize === s ? 'btn-primary' : 'btn-outline-primary'"
+                                    (click)="selectSize(s)">
+                                    {{ s }}
                                 </button>
                             </div>
                         </div>
+
+                        <!-- Color -->
+                        <label class="d-block mb-2">Chọn Màu:</label>
+                        <div class="row g-2">
+                            <div class="col-3" *ngFor="let c of colors">
+                                <button type="button" class="btn w-100" [disabled]="!isColorAvailableForSize(c)"
+                                    [ngClass]="selectedColor === c ? 'btn-dark' : 'btn-outline-dark'"
+                                    (click)="selectColor(c)">
+                                    {{ c }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Hiển thị giá -->
+                        <div class="mtext-106 cl2 mb-3">
+                            <ng-container *ngIf="selectedPrice !== null; else defaultPrice">
+                                {{ selectedPrice | number:'1.0-0' }} đ
+                            </ng-container>
+                            <ng-template #defaultPrice>
+                                {{ product?.price | number:'1.0-0' }} đ
+                            </ng-template>
+                        </div>
+
+
+
+
+
+
+
+
+
+
+                        <div class="wrap-num-product flex-w m-r-20 m-tb-10">
+                            <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m" (click)="decreaseQty()">
+                                <i class="fs-16 zmdi zmdi-minus"></i>
+                            </div>
+                            <input class="mtext-104 cl3 txt-center num-product" type="number" [(ngModel)]="quantity">
+                            <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m" (click)="increaseQty()">
+                                <i class="fs-16 zmdi zmdi-plus"></i>
+                            </div>
+                        </div>
+                        <button (click)="addToCart()"
+                            [disabled]="selectedVariant && selectedVariant.stockQuantity === 0"
+                            class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                            Add to cart
+                        </button>
+
+
+
+
                     </div>
 
                     <!--  -->

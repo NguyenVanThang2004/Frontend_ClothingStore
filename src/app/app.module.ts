@@ -30,6 +30,8 @@ import { ReportsComponent } from './components/admin/reports/reports.component';
 import { SettingsComponent } from './components/admin/settings/settings.component';
 import { BaseModalComponent } from './shared/base-modal/base-modal.component';
 import { TokenInterceptor } from './interceptors/token.interceptor';
+import { ProfileComponent } from './components/profile/profile.component';
+import { MyOrdersComponent } from './components/my-order/my-order.component';
 
 
 @NgModule({
@@ -54,7 +56,10 @@ import { TokenInterceptor } from './interceptors/token.interceptor';
     UsersComponent,
     ReportsComponent,
     SettingsComponent,
-    BaseModalComponent
+    BaseModalComponent,
+    ProfileComponent,
+    MyOrdersComponent
+
   ],
   imports: [
     BrowserModule,
