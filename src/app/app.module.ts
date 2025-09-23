@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 
@@ -32,6 +33,7 @@ import { BaseModalComponent } from './shared/base-modal/base-modal.component';
 import { TokenInterceptor } from './interceptors/token.interceptor';
 import { ProfileComponent } from './components/profile/profile.component';
 import { MyOrdersComponent } from './components/my-order/my-order.component';
+import { PaymentResultComponent } from './components/payment-result/payment-result.component';
 
 
 @NgModule({
@@ -58,10 +60,12 @@ import { MyOrdersComponent } from './components/my-order/my-order.component';
     SettingsComponent,
     BaseModalComponent,
     ProfileComponent,
-    MyOrdersComponent
+    MyOrdersComponent,
+    PaymentResultComponent
 
   ],
   imports: [
+    CommonModule,
     BrowserModule,
     AppRoutingModule,
     SlickCarouselModule,
@@ -73,6 +77,7 @@ import { MyOrdersComponent } from './components/my-order/my-order.component';
       positionClass: 'toast-bottom-right',
       preventDuplicates: true,
     })
+
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },

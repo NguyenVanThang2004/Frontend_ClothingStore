@@ -93,7 +93,10 @@
                             <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m" (click)="decreaseQty()">
                                 <i class="fs-16 zmdi zmdi-minus"></i>
                             </div>
-                            <input class="mtext-104 cl3 txt-center num-product" type="number" [(ngModel)]="quantity">
+                            <input class="mtext-104 cl3 txt-center num-product" type="number" min="1"
+                                [max]="selectedVariant?.stockQuantity || 1" [(ngModel)]="quantity"
+                                (change)="onQuantityInputChange()" />
+
                             <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m" (click)="increaseQty()">
                                 <i class="fs-16 zmdi zmdi-plus"></i>
                             </div>

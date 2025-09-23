@@ -157,11 +157,27 @@ export class ProductDetailComponent implements OnInit {
   }
 
   increaseQty(): void {
+    const max = this.selectedVariant?.stockQuantity ?? 1;
+    if (this.quantity >= max) {
+      this.toastr.warning(`Chỉ còn ${max} sản phẩm trong kho`);
+      this.quantity = max;
+      return;
+    }
     this.quantity++;
   }
 
   decreaseQty(): void {
     if (this.quantity > 1) this.quantity--;
+  }
+
+  /** Gọi khi người dùng sửa số lượng bằng bàn phím */
+  onQuantityInputChange(): void {
+    const max = this.selectedVariant?.stockQuantity ?? 1;
+    if (this.quantity < 1) this.quantity = 1;
+    if (this.quantity > max) {
+      this.toastr.warning(`Chỉ còn ${max} sản phẩm trong kho`);
+      this.quantity = max;
+    }
   }
 
   addToCart(): void {
@@ -181,14 +197,23 @@ export class ProductDetailComponent implements OnInit {
       return;
     }
 
+    const max = variant.stockQuantity;
+    if (this.quantity > max) {
+      this.toastr.error(`Chỉ còn ${max} sản phẩm trong kho`);
+      this.quantity = max;
+      return;
+    }
+
     const cartItem = {
       productId: this.product.id,
       variantId: variant.id,
+      categoryId: this.product.category.id,
       name: this.product.name,
       price: variant.price,
       size: this.selectedSize,
       color: this.selectedColor,
       quantity: this.quantity,
+      stockQuantity: variant.stockQuantity,
       image: this.images[0]?.url || ''
     };
 

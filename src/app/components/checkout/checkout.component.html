@@ -14,133 +14,92 @@
     </div>
 </div>
 
-<!-- Checkout -->
-<form class="bg0 p-t-75 p-b-85">
+
+
+
+
+<form class="bg0 p-t-75 p-b-85" (ngSubmit)="placeOrder()">
     <div class="container">
         <div class="row">
             <!-- Billing Details -->
             <div class="col-lg-7 col-xl-7 m-b-50">
                 <div class="bor10 p-lr-40 p-t-30 p-b-40 p-lr-15-sm">
-                    <h4 class="mtext-109 cl2 p-b-30">
-                        Billing Details
-                    </h4>
+                    <h4 class="mtext-109 cl2 p-b-30">THÔNG TIN GIAO HÀNG</h4>
 
                     <div class="row">
                         <div class="col-sm-6 p-b-20">
-                            <label class="stext-111 cl2">Full Name *</label>
-                            <input class="size-111 bor8 stext-102 cl2 p-lr-20" type="text" name="fullname" required>
+                            <label>Họ Tên *</label>
+                            <input [(ngModel)]="orderForm.fullName" name="fullName"
+                                class="size-111 bor8 stext-102 cl2 p-lr-20" required />
                         </div>
-
                         <div class="col-sm-6 p-b-20">
-                            <label class="stext-111 cl2">Phone *</label>
-                            <input class="size-111 bor8 stext-102 cl2 p-lr-20" type="text" name="phone" required>
+                            <label>Số điện thoại *</label>
+                            <input [(ngModel)]="orderForm.phone" name="phone"
+                                class="size-111 bor8 stext-102 cl2 p-lr-20" required />
                         </div>
-
                         <div class="col-sm-12 p-b-20">
-                            <label class="stext-111 cl2">Email *</label>
-                            <input class="size-111 bor8 stext-102 cl2 p-lr-20" type="email" name="email" required>
+                            <label>Email *</label>
+                            <input [(ngModel)]="orderForm.email" name="email" type="email"
+                                class="size-111 bor8 stext-102 cl2 p-lr-20" required />
                         </div>
-
                         <div class="col-sm-12 p-b-20">
-                            <label class="stext-111 cl2">Address *</label>
-                            <input class="size-111 bor8 stext-102 cl2 p-lr-20" type="text" name="address" required>
+                            <label>Địac chỉ *</label>
+                            <input [(ngModel)]="orderForm.address" name="address"
+                                class="size-111 bor8 stext-102 cl2 p-lr-20" required />
                         </div>
-
-
-
-
                     </div>
                 </div>
             </div>
 
             <!-- Order Summary -->
-            <!-- Order Summary -->
             <div class="col-lg-5 col-xl-5 m-b-50">
                 <div class="bor10 p-lr-40 p-t-30 p-b-40 p-lr-15-sm">
-                    <h4 class="mtext-109 cl2 p-b-30">
-                        Your Order
-                    </h4>
+                    <h4 class="mtext-109 cl2 p-b-30">ĐƠN HÀNG CỦA BẠN</h4>
 
-                    <!-- Product List -->
                     <ul class="header-cart-wrapitem w-full p-b-20">
-                        <li class="header-cart-item flex-w flex-t m-b-12">
+                        <li *ngFor="let i of checkoutItems" class="header-cart-item flex-w flex-t m-b-12">
                             <div class="header-cart-item-img">
-                                <img src="/assets/images/item-cart-01.jpg" alt="IMG">
+                                <img [src]="i.image || '/assets/images/default.png'" [alt]="i.name" />
                             </div>
-
                             <div class="header-cart-item-txt p-t-8">
-                                <span class="header-cart-item-name m-b-18 hov-cl1 trans-04">
-                                    Fresh Strawberries
-                                </span>
-
-                                <span class="header-cart-item-info">
-                                    1 x $19.65
-                                </span>
-                            </div>
-                        </li>
-
-                        <li class="header-cart-item flex-w flex-t m-b-12">
-                            <div class="header-cart-item-img">
-                                <img src="/assets/images/item-cart-02.jpg" alt="IMG">
-                            </div>
-
-                            <div class="header-cart-item-txt p-t-8">
-                                <span class="header-cart-item-name m-b-18 hov-cl1 trans-04">
-                                    Lightweight Jacket
-                                </span>
-
-                                <span class="header-cart-item-info">
-                                    1 x $60.00
-                                </span>
+                                <span class="header-cart-item-name m-b-18">{{ i.name }} ({{ i.size }} - {{ i.color
+                                    }})</span>
+                                <span class="header-cart-item-info">{{ i.quantity }} x {{ i.price | number:'1.0-0' }}
+                                    đ</span>
                             </div>
                         </li>
                     </ul>
 
-                    <!-- Subtotal -->
                     <div class="flex-w flex-t bor12 p-tb-13">
-                        <div class="size-208">
-                            <span class="stext-110 cl2">Subtotal:</span>
-                        </div>
-                        <div class="size-209">
-                            <span class="mtext-110 cl2">$79.65</span>
-                        </div>
+                        <div class="size-208"><span>Tạm tính:</span></div>
+                        <div class="size-209"><span>{{ subtotal | number:'1.0-0' }} đ</span></div>
                     </div>
 
-                    <!-- Total -->
                     <div class="flex-w flex-t p-t-27 p-b-33">
-                        <div class="size-208">
-                            <span class="mtext-101 cl2">Total:</span>
-                        </div>
-                        <div class="size-209 p-t-1">
-                            <span class="mtext-110 cl2">$79.65</span>
-                        </div>
+                        <div class="size-208"><span>Tổng cộng:</span></div>
+                        <div class="size-209 p-t-1"><span>{{ total | number:'1.0-0' }} đ</span></div>
                     </div>
 
-                    <!-- Payment Methods -->
+                    <!-- Payment -->
                     <div class="p-t-15">
-                        <label class="stext-111 cl2 p-b-10">Payment Method *</label>
+                        <label class="stext-111 cl2 p-b-10">Phương thức thanh toán *</label>
                         <div class="p-b-10">
-                            <input type="radio" name="payment" value="cod" checked> Cash on Delivery
+                            <input type="radio" [(ngModel)]="orderForm.payment" name="payment" value="COD" checked />
+                            Thanh toán khi nhận hàng
                         </div>
                         <div class="p-b-10">
-                            <input type="radio" name="payment" value="card"> Credit / Debit Card
-                        </div>
-                        <div class="p-b-10">
-                            <input type="radio" name="payment" value="paypal"> PayPal
+                            <input type="radio" [(ngModel)]="orderForm.payment" name="payment" value="VNPAY" /> VN pay
                         </div>
                     </div>
 
-                    <!-- Button -->
-                    <button type="submit"
-                        class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer m-t-20">
-                        Place Order
-                    </button>
+                    <button type="submit" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 m-t-20">Đặt
+                        hàng</button>
                 </div>
             </div>
-
         </div>
     </div>
 </form>
+
 
 
 <app-footer></app-footer>

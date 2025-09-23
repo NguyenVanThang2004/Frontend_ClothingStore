@@ -59,7 +59,8 @@ export class ProfileComponent implements OnInit {
         // Chỉ cho update 2 field: fullName + address
         const payload = {
             fullName: this.user.fullName,
-            address: this.user.address
+            address: this.user.address,
+            dateOfBirth: this.user.dateOfBirth
         };
 
         this.userService.updateUser(this.user.id, payload).subscribe({

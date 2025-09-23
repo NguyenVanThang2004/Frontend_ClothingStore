@@ -10,6 +10,7 @@ import { ReqOrderDTO, ReqUpdateOrderStatusDTO, ResOrderDTO } from '../dtos/order
 })
 export class OrderService {
     private apiOrder = `${environment.apiBaseUrl}/orders`;
+    private apiVNpay = `${environment.apiBaseUrl}/payment`;
     constructor(private http: HttpClient) { }
 
     getOrders(page: number, pageSize: number): Observable<{ orders: any[]; meta: any }> {
@@ -52,6 +53,11 @@ export class OrderService {
             }))
         );
     }
+
+    createPayment(req: { amount: string; orderRequest: ReqOrderDTO }): Observable<string> {
+        return this.http.post(this.apiVNpay, req, { responseType: 'text' });
+    }
+
 
 
 }

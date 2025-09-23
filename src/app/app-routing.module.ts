@@ -19,6 +19,8 @@ import { OrdersComponent } from './components/admin/orders/orders.component';
 import { ReportsComponent } from './components/admin/reports/reports.component';
 import { ProfileComponent } from './components/profile/profile.component'
 import { MyOrdersComponent } from './components/my-order/my-order.component';
+import { PaymentResultComponent } from './components/payment-result/payment-result.component';
+
 
 
 
@@ -38,7 +40,8 @@ const routes: Routes = [
       { path: 'checkout', component: CheckoutComponent },
       { path: 'product-detail/:id', component: ProductDetailComponent },
       { path: 'profile', component: ProfileComponent },
-      { path: 'my-order', component: MyOrdersComponent }
+      { path: 'my-order', component: MyOrdersComponent },
+      { path: 'payment-result', component: PaymentResultComponent }
 
     ]
 
@@ -59,7 +62,12 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [
+    RouterModule.forRoot(routes, {
+      scrollPositionRestoration: 'enabled',
+      anchorScrolling: 'enabled'
+    })
+  ],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

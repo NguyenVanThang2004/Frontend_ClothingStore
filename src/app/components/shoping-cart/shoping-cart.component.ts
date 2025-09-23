@@ -63,6 +63,10 @@ export class ShopingCartComponent implements OnInit {
   // Số lượng
   // ------------------------
   increaseQty(item: CartItem): void {
+    if (item.quantity + 1 > item.stockQuantity) {
+      this.toastr.error('Sản phẩm vượt quá số lượng tồn kho!');
+      return;
+    }
     this.cartService.updateQuantity(item.productId, item.variantId, item.quantity + 1);
     this.loadCart();
   }
@@ -72,6 +76,16 @@ export class ShopingCartComponent implements OnInit {
       this.cartService.updateQuantity(item.productId, item.variantId, item.quantity - 1);
       this.loadCart();
     }
+  }
+  onManualQtyChange(item: CartItem): void {
+    let q = Number(item.quantity) || 1;
+    if (q < 1) q = 1;
+    if (q > item.stockQuantity) {
+      this.toastr.warning(`Chỉ còn ${item.stockQuantity} sản phẩm trong kho`);
+      q = item.stockQuantity;
+    }
+    this.cartService.updateQuantity(item.productId, item.variantId, q);
+    this.loadCart();
   }
 
   // ------------------------
@@ -92,11 +106,14 @@ export class ShopingCartComponent implements OnInit {
       this.toastr.warning('Vui lòng chọn ít nhất 1 sản phẩm để thanh toán!');
       return;
     }
+    // Chặn case vượt tồn trước khi qua checkout
+    const invalid = selectedItems.find(i => i.quantity > i.stockQuantity);
+    if (invalid) {
+      this.toastr.error(`Mặt hàng "${invalid.name}" vượt quá tồn (${invalid.stockQuantity}). Vui lòng giảm số lượng.`);
+      return;
+    }
 
-    // 👉 lưu selectedItems vào CartService hoặc localStorage để Checkout dùng
     this.cartService.setCheckoutItems(selectedItems);
-
-    // 👉 điều hướng sang trang checkout
     this.router.navigate(['/checkout']);
   }
 }

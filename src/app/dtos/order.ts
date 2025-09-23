@@ -54,9 +54,12 @@ export interface ReqOrderDTO {
     orderDetails: {
         productId: number;
         variantId: number;
+        categoryId: number;
         numberOfProducts: number;
+        price: number;
     }[];
 }
+
 
 /**
  * Dùng cho PUT /orders/{id}

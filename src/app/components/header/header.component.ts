@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/service/auth.service';
 import { TokenService } from 'src/app/service/token.service';
-
+import { CartService } from 'src/app/service/cart.service';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -12,16 +13,21 @@ export class HeaderComponent implements OnInit {
 
   userName: string = '';
   isLoggedIn: boolean = false;
+  cartCount = 0;
+  private sub?: Subscription;
 
   constructor(
     private authService: AuthService,
     private tokenService: TokenService,
+    private cartService: CartService,
     private router: Router
   ) { }
 
   ngOnInit(): void {
     this.isLoggedIn = this.tokenService.getToken() != null;
-
+    this.sub = this.cartService.cartCount$.subscribe(count => {
+      this.cartCount = count;
+    });
     if (this.isLoggedIn) {
       this.authService.getCurrentUserName().subscribe({
         next: (name: string) => this.userName = name,
@@ -29,6 +35,8 @@ export class HeaderComponent implements OnInit {
       });
     }
   }
+
+
 
   logout(): void {
     this.authService.logout().subscribe({
@@ -43,5 +51,8 @@ export class HeaderComponent implements OnInit {
         this.router.navigate(['/login']);
       }
     });
+  }
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
   }
 }

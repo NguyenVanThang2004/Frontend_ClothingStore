@@ -22,11 +22,11 @@
                         <th style="width:40px;">
                             <input type="checkbox" [(ngModel)]="selectAll" (change)="toggleSelectAll()">
                         </th>
-                        <th>Product</th>
-                        <th>Details</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Total</th>
+                        <th>SẢN PHẨM</th>
+                        <th>CHI TIẾT</th>
+                        <th>GIÁ</th>
+                        <th>SỐ LƯỢNG</th>
+                        <th>TỔNG CỘNG</th>
                         <th></th>
                     </tr>
 
@@ -60,9 +60,10 @@
                                     (click)="decreaseQty(item)">
                                     <i class="fs-16 zmdi zmdi-minus"></i>
                                 </div>
-                                <input class="mtext-104 cl3 txt-center num-product" type="number"
-                                    [(ngModel)]="item.quantity"
-                                    (change)="cartService.updateQuantity(item.productId, item.variantId, item.quantity); loadCart()">
+                                <input class="mtext-104 cl3 txt-center num-product" type="number" min="1"
+                                    [max]="item.stockQuantity" [(ngModel)]="item.quantity"
+                                    (change)="onManualQtyChange(item)" />
+
                                 <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m"
                                     (click)="increaseQty(item)">
                                     <i class="fs-16 zmdi zmdi-plus"></i>
@@ -85,11 +86,11 @@
 
         <div class="col-lg-4 col-xl-4 m-lr-auto m-b-50">
             <div class="bor10 p-lr-40 p-t-30 p-b-40">
-                <h4 class="mtext-109 cl2 p-b-30">Cart Totals</h4>
+                <h4 class="mtext-109 cl2 p-b-30">Tổng giỏ hàng</h4>
 
                 <div class="flex-w flex-t p-b-13">
                     <div class="size-208">
-                        <span class="stext-110 cl2">Total:</span>
+                        <span class="stext-110 cl2">Tổng cộng:</span>
                     </div>
                     <div class="size-209">
                         <span class="mtext-110 cl2">{{ total | number:'1.0-0' }} đ</span>
@@ -98,7 +99,7 @@
 
                 <button (click)="proceedToCheckout()"
                     class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
-                    Proceed to Checkout
+                    Tiến hành thanh toán
                 </button>
 
             </div>
