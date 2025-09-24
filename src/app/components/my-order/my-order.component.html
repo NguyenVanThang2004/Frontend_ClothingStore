@@ -32,6 +32,7 @@
                         <th>Số lượng</th>
                         <th>Giá</th>
                         <th>Tổng</th>
+                        <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,6 +44,13 @@
                         <td>{{ item.numberOfProducts }}</td>
                         <td>{{ item.price | number:'1.0-0' }} đ</td>
                         <td>{{ item.totalMoney | number:'1.0-0' }} đ</td>
+                        <td>
+                            <button *ngIf="order.status === 'DELIVERED'" class="btn btn-primary btn-sm"
+                                (click)="reviewProduct(item)">
+                                Đánh giá
+                            </button>
+                        </td>
+
                     </tr>
                 </tbody>
             </table>

@@ -1,15 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+
 import { ProductService } from 'src/app/service/product.service';
 import { ProductImageService } from 'src/app/service/productImage.service';
 import { ProductVariantService } from 'src/app/service/productVariant.service';
+import { CartService } from 'src/app/service/cart.service';
+import { ReviewService } from 'src/app/service/review.service';
+import { AuthService } from 'src/app/service/auth.service';
+
 import { ProductDTO } from 'src/app/dtos/product';
 import { ProductImageDTO } from 'src/app/dtos/productImage';
 import { ProductVariantDTO } from 'src/app/dtos/productVariant';
-import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
-import { CartService } from 'src/app/service/cart.service';
-
+import { ReviewDTO, ReqReviewDTO } from 'src/app/dtos/review';
 
 @Component({
   selector: 'app-product-detail',
@@ -18,7 +21,7 @@ import { CartService } from 'src/app/service/cart.service';
 })
 export class ProductDetailComponent implements OnInit {
   // ------------------------
-  // Data state
+  // Product state
   // ------------------------
   product!: ProductDTO;
   images: ProductImageDTO[] = [];
@@ -29,14 +32,29 @@ export class ProductDetailComponent implements OnInit {
   // ------------------------
   sizes: string[] = [];
   colors: string[] = [];
-  selectedSize: string = '';
-  selectedColor: string = '';
+  selectedSize = '';
+  selectedColor = '';
 
   // ------------------------
-  // Price & Quantity
+  // Cart state
   // ------------------------
   selectedPrice: number | null = null;
-  quantity: number = 1;
+  quantity = 1;
+
+  // ------------------------
+  // Review state
+  // ------------------------
+  reviews: ReviewDTO[] = [];
+  newReview: ReqReviewDTO = {
+    rating: 0,
+    comment: '',
+    userId: 0,
+    productId: 0,
+    orderDetailId: 0
+  };
+
+  currentUserId: number | null = null;
+  selectedOrderDetailId: number | null = null;
 
   // ------------------------
   // Carousel config
@@ -56,19 +74,28 @@ export class ProductDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
+    private toastr: ToastrService,
+
     private productService: ProductService,
     private productImageService: ProductImageService,
     private productVariantService: ProductVariantService,
-    private toastr: ToastrService,
     private cartService: CartService,
-    private router: Router,
+    private reviewService: ReviewService,
+    private authService: AuthService
   ) { }
 
+  // ------------------------
+  // Lifecycle
+  // ------------------------
   ngOnInit(): void {
     const productId = Number(this.route.snapshot.paramMap.get('id'));
+    this.selectedOrderDetailId = Number(this.route.snapshot.queryParamMap.get('orderDetailId'));
     this.loadProduct(productId);
     this.loadImages(productId);
     this.loadVariants(productId);
+    this.loadReviews(productId);
+    this.loadCurrentUser();
   }
 
   // ------------------------
@@ -96,54 +123,57 @@ export class ProductDetailComponent implements OnInit {
     });
   }
 
+  private loadReviews(productId: number) {
+    this.reviewService.getReviewsByProduct(productId).subscribe({
+      next: res => (this.reviews = res),
+      error: () => this.toastr.error('Không thể tải review!')
+    });
+  }
+
+  private loadCurrentUser() {
+    this.authService.getCurrentUser().subscribe({
+      next: res => {
+        this.currentUserId = res.data?.user?.id || null;
+      },
+      error: () => {
+        this.currentUserId = null;
+      }
+    });
+  }
+
   // ------------------------
   // Availability checks
   // ------------------------
   isSizeAvailableForColor(size: string): boolean {
-    if (!this.selectedColor) {
-      return this.variants.some(v => v.size === size && v.stockQuantity > 0);
-    }
     return this.variants.some(
       v =>
         v.size === size &&
-        v.color === this.selectedColor &&
+        (!this.selectedColor || v.color === this.selectedColor) &&
         v.stockQuantity > 0
     );
   }
 
   isColorAvailableForSize(color: string): boolean {
-    if (!this.selectedSize) {
-      return this.variants.some(v => v.color === color && v.stockQuantity > 0);
-    }
     return this.variants.some(
       v =>
         v.color === color &&
-        v.size === this.selectedSize &&
+        (!this.selectedSize || v.size === this.selectedSize) &&
         v.stockQuantity > 0
     );
   }
 
   // ------------------------
-  // Handlers
+  // Handlers - Variants
   // ------------------------
   selectSize(size: string) {
-    if (this.selectedSize === size) {
-      this.selectedSize = '';
-    } else {
-      this.selectedSize = size;
-    }
+    this.selectedSize = this.selectedSize === size ? '' : size;
     this.updatePrice();
   }
 
   selectColor(color: string) {
-    if (this.selectedColor === color) {
-      this.selectedColor = '';
-    } else {
-      this.selectedColor = color;
-    }
+    this.selectedColor = this.selectedColor === color ? '' : color;
     this.updatePrice();
   }
-
 
   private updatePrice() {
     if (this.selectedSize && this.selectedColor) {
@@ -156,6 +186,9 @@ export class ProductDetailComponent implements OnInit {
     }
   }
 
+  // ------------------------
+  // Handlers - Quantity
+  // ------------------------
   increaseQty(): void {
     const max = this.selectedVariant?.stockQuantity ?? 1;
     if (this.quantity >= max) {
@@ -170,7 +203,6 @@ export class ProductDetailComponent implements OnInit {
     if (this.quantity > 1) this.quantity--;
   }
 
-  /** Gọi khi người dùng sửa số lượng bằng bàn phím */
   onQuantityInputChange(): void {
     const max = this.selectedVariant?.stockQuantity ?? 1;
     if (this.quantity < 1) this.quantity = 1;
@@ -180,6 +212,9 @@ export class ProductDetailComponent implements OnInit {
     }
   }
 
+  // ------------------------
+  // Cart
+  // ------------------------
   addToCart(): void {
     if (!this.selectedSize || !this.selectedColor) {
       this.toastr.warning('Vui lòng chọn Size và Màu sắc trước khi thêm vào giỏ!');
@@ -197,10 +232,9 @@ export class ProductDetailComponent implements OnInit {
       return;
     }
 
-    const max = variant.stockQuantity;
-    if (this.quantity > max) {
-      this.toastr.error(`Chỉ còn ${max} sản phẩm trong kho`);
-      this.quantity = max;
+    if (this.quantity > variant.stockQuantity) {
+      this.toastr.error(`Chỉ còn ${variant.stockQuantity} sản phẩm trong kho`);
+      this.quantity = variant.stockQuantity;
       return;
     }
 
@@ -217,16 +251,10 @@ export class ProductDetailComponent implements OnInit {
       image: this.images[0]?.url || ''
     };
 
-    console.log('🛒 Add to Cart Item:', cartItem);
     this.cartService.addItem(cartItem);
-
-
     this.toastr.success('Đã thêm sản phẩm vào giỏ hàng!', 'Thành công');
-
-    // 👉 điều hướng sang cart
     this.router.navigate(['/shoping-cart']);
   }
-
 
   get selectedVariant(): ProductVariantDTO | undefined {
     if (!this.selectedSize || !this.selectedColor) return undefined;
@@ -235,7 +263,48 @@ export class ProductDetailComponent implements OnInit {
     );
   }
 
+  // ------------------------
+  // Review
+  // ------------------------
+  submitReview() {
+    if (this.newReview.rating <= 0) {
+      this.toastr.warning('Vui lòng chọn số sao!');
+      return;
+    }
+    if (!this.newReview.comment.trim()) {
+      this.toastr.warning('Vui lòng nhập nội dung review!');
+      return;
+    }
+    if (!this.currentUserId) {
+      this.toastr.error('Bạn cần đăng nhập để đánh giá!');
+      return;
+    }
+    if (!this.selectedOrderDetailId) {
+      this.toastr.error('Không tìm thấy orderDetailId để đánh giá!');
+      return;
+    }
+
+    const payload: ReqReviewDTO = {
+      rating: this.newReview.rating,
+      comment: this.newReview.comment,
+      userId: this.currentUserId,
+      productId: this.product.id,
+      orderDetailId: this.selectedOrderDetailId
 
 
+    };
+    console.log('Submitting review:', payload);
 
+    this.reviewService.createReview(payload).subscribe({
+      next: (res) => {
+        this.toastr.success('Thêm review thành công!');
+        this.reviews.push(res);
+        this.newReview = { rating: 0, comment: '', userId: 0, productId: 0, orderDetailId: 0 };
+      },
+      error: (err) => {
+        const msg = err.error?.message || 'Không thể thêm review';
+        this.toastr.error(msg);
+      }
+    });
+  }
 }

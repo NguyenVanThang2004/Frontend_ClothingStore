@@ -50,4 +50,9 @@ export class MyOrdersComponent implements OnInit {
             error: () => this.toastr.error('Hủy đơn hàng thất bại')
         });
     }
+    reviewProduct(item: any): void {
+        // Điều hướng sang ProductDetail, truyền cả orderDetailId
+        window.location.href = `/product-detail/${item.productId}?orderDetailId=${item.id}`;
+    }
+
 }
