@@ -70,6 +70,15 @@ export class UserService {
         );
     }
 
+    forgotPasswordReset(email: string, newPassword: string) {
+        return this.http.post(
+            `${this.apiUser}/forgot-password-reset`,
+            { email, newPassword },
+            { responseType: 'text' } // hoặc để JSON nếu BE trả JSON
+        );
+    }
+
+
 
 
 }

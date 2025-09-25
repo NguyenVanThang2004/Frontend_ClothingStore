@@ -20,6 +20,7 @@ import { ReportsComponent } from './components/admin/reports/reports.component';
 import { ProfileComponent } from './components/profile/profile.component'
 import { MyOrdersComponent } from './components/my-order/my-order.component';
 import { PaymentResultComponent } from './components/payment-result/payment-result.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 
 
 
@@ -41,7 +42,9 @@ const routes: Routes = [
       { path: 'product-detail/:id', component: ProductDetailComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'my-order', component: MyOrdersComponent },
-      { path: 'payment-result', component: PaymentResultComponent }
+      { path: 'payment-result', component: PaymentResultComponent },
+      { path: 'forgot-password', component: ForgotPasswordComponent },
+
 
     ]
 

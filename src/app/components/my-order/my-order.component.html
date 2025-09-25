@@ -11,7 +11,9 @@
             <span class="badge bg-success">{{ order.status }}</span>
         </div>
         <div class="card-body">
-            <p><strong>Ngày đặt:</strong> {{ order.orderDate | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p><strong>Ngày đặt:</strong> {{ order.orderDate | date:'dd/MM/yyyy HH:mm':'UTC' }}</p>
+
+
             <p><strong>Tổng tiền:</strong> {{ order.totalMoney | number:'1.0-0' }} đ</p>
             <p><strong>Phương thức thanh toán:</strong> {{ order.paymentMethod }}</p>
             <p><strong>Phương thức vận chuyển:</strong> {{ order.shippingMethod }}</p>

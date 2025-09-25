@@ -25,6 +25,24 @@ export class OrderService {
             }))
         );
     }
+    getOrdersByUserId(userId: number, params: { page?: number, size?: number }): Observable<{ orders: any[]; meta: any }> {
+        let httpParams = new HttpParams()
+            .set('page', String((params.page ?? 1) - 1)) // Spring 0-based
+            .set('size', String(params.size ?? 12));
+
+        return this.http.get<any>(`${this.apiOrder}/${userId}`, { params: httpParams }).pipe(
+            map(res => ({
+                orders: res.data.content,
+                meta: {
+                    page: res.data.number + 1,
+                    pageSize: res.data.size,
+                    total: res.data.totalElements,
+                    pages: res.data.totalPages
+                }
+            }))
+        );
+
+    }
 
     createOrder(req: ReqOrderDTO): Observable<ResOrderDTO> {
         return this.http.post<ResOrderDTO>(this.apiOrder, req);

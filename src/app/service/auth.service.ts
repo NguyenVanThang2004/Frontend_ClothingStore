@@ -15,6 +15,8 @@ export class AuthService {
     private apiRefresh = `${environment.apiBaseUrl}/auth/refresh`;
     private apiLogout = `${environment.apiBaseUrl}/auth/logout`;
     private apiAccount = `${environment.apiBaseUrl}/auth/account`;
+    private apiForgotSend = `${environment.apiBaseUrl}/auth/forgot-password-send-email`;
+    private apiForgotVerify = `${environment.apiBaseUrl}/auth/forgot-password-verify-otp`;
 
     constructor(private http: HttpClient) { }
 
@@ -41,6 +43,26 @@ export class AuthService {
         return this.http.get<any>(this.apiAccount);
 
     }
+
+    forgotPasswordSend(email: string) {
+        return this.http.get(
+            `${environment.apiBaseUrl}/auth/forgot-password-send-email?email=${email}`,
+            { responseType: 'text' }
+        );
+    }
+
+
+    forgotPasswordVerify(email: string, otp: string) {
+        return this.http.post(
+            this.apiForgotVerify,
+            null,
+            {
+                params: { email, otp },
+                responseType: 'text'
+            }
+        );
+    }
+
 
 
 

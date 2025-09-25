@@ -34,6 +34,7 @@ import { TokenInterceptor } from './interceptors/token.interceptor';
 import { ProfileComponent } from './components/profile/profile.component';
 import { MyOrdersComponent } from './components/my-order/my-order.component';
 import { PaymentResultComponent } from './components/payment-result/payment-result.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 
 
 @NgModule({
@@ -61,7 +62,8 @@ import { PaymentResultComponent } from './components/payment-result/payment-resu
     BaseModalComponent,
     ProfileComponent,
     MyOrdersComponent,
-    PaymentResultComponent
+    PaymentResultComponent,
+    ForgotPasswordComponent
 
   ],
   imports: [

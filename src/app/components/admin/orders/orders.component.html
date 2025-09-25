@@ -28,7 +28,8 @@
             <tr *ngFor="let o of orders">
                 <td>{{o.id}}</td>
                 <td>{{ o.fullname || o.user.name }}</td>
-                <td>{{ o.orderDate | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ o.orderDate | date:'dd/MM/yyyy HH:mm':'UTC' }}</td>
+
                 <td>{{ o.paymentMethod }}</td>
                 <td><span [class]="statusClass(o.status)">{{ o.status }}</span></td>
                 <td class="text-end">{{ o.totalMoney | number:'1.0-0' }} đ</td>
