@@ -63,6 +63,25 @@ export class AuthService {
         );
     }
 
+    // gửi OTP khi user nhập email, sđt, password
+    sendRegisterOtp(payload: any) {
+        return this.http.post(
+            `${environment.apiBaseUrl}/auth/verify-register-otp`,
+            payload,
+            { responseType: 'text' }
+        );
+    }
+
+    // xác thực OTP và tạo tài khoản
+    createAccountAfterOtp(payload: any) {
+        return this.http.post(
+            `${environment.apiBaseUrl}/auth/create-verify-otp`,
+            payload,
+            { responseType: 'text' }
+        );
+    }
+
+
 
 
 

@@ -74,10 +74,21 @@ export class UserService {
         return this.http.post(
             `${this.apiUser}/forgot-password-reset`,
             { email, newPassword },
-            { responseType: 'text' } // hoặc để JSON nếu BE trả JSON
+            { responseType: 'text' }
         );
     }
 
+    changePassword(id: number | string, payload: {
+        oldPassword: string;
+        newPassword: string;
+        reEnterPassword: string;
+    }) {
+        return this.http.put(
+            `${this.apiUser}/${id}/change-password`,
+            payload,
+            { responseType: 'text' }
+        );
+    }
 
 
 
