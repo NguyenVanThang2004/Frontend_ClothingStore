@@ -44,6 +44,10 @@ const routes: Routes = [
       { path: 'my-order', component: MyOrdersComponent },
       { path: 'payment-result', component: PaymentResultComponent },
       { path: 'forgot-password', component: ForgotPasswordComponent },
+      { path: 'forgot-password', component: ForgotPasswordComponent },
+
+
+
 
 
     ]
