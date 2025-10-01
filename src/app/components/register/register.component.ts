@@ -159,11 +159,11 @@ export class RegisterComponent {
 
   private pickErr(err: HttpErrorResponse, fallback: string): string {
     return (
-      (typeof err?.error === 'string' && err.error) ||
       err?.error?.message ||
       err?.error?.error ||
       err?.message ||
       fallback
     );
   }
+
 }

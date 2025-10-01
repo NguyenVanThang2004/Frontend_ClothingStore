@@ -125,10 +125,6 @@ export class ProfileComponent implements OnInit {
             error: (err: HttpErrorResponse) => {
                 this.changePassLoading = false;
                 const msg =
-                    (typeof err?.error === 'string' && err.error) ||
-                    err?.error?.message ||
-                    err?.error?.error ||
-                    err?.message ||
                     'Đổi mật khẩu thất bại';
                 this.changePassError = msg;
                 this.toastr.error(this.changePassError);

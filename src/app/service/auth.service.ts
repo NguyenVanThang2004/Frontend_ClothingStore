@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { RegisterDTO } from '../dtos/user/register.dto';
 import { LoginDTO } from '../dtos/user/login.dto';
 import { environment } from '../environments/environments';
+import { TokenService } from './token.service';
 
 @Injectable({
     providedIn: 'root'
@@ -18,7 +19,14 @@ export class AuthService {
     private apiForgotSend = `${environment.apiBaseUrl}/auth/forgot-password-send-email`;
     private apiForgotVerify = `${environment.apiBaseUrl}/auth/forgot-password-verify-otp`;
 
-    constructor(private http: HttpClient) { }
+    // ✅ Trạng thái đăng nhập phát cho toàn app
+    private loggedIn = new BehaviorSubject<boolean>(this.tokenService.getToken() != null);
+    loggedIn$ = this.loggedIn.asObservable();
+
+    constructor(
+        private http: HttpClient,
+        private tokenService: TokenService
+    ) { }
 
     register(registerDTO: RegisterDTO): Observable<any> {
         return this.http.post<any>(this.apiRegister, registerDTO);
@@ -31,26 +39,27 @@ export class AuthService {
     refresh(): Observable<any> {
         return this.http.get<any>(this.apiRefresh, { withCredentials: true });
     }
+
     logout(): Observable<any> {
         return this.http.post<any>(this.apiLogout, {}, { withCredentials: true });
     }
 
     getCurrentUserName(): Observable<string> {
-        return this.http.get<any>(this.apiAccount).pipe(map(res => res.data.user.name)
+        return this.http.get<any>(this.apiAccount).pipe(
+            map(res => res?.data?.user?.name as string)
         );
     }
+
     getCurrentUser(): Observable<any> {
         return this.http.get<any>(this.apiAccount);
-
     }
 
     forgotPasswordSend(email: string) {
         return this.http.get(
-            `${environment.apiBaseUrl}/auth/forgot-password-send-email?email=${email}`,
+            `${environment.apiBaseUrl}/auth/forgot-password-send-email?email=${encodeURIComponent(email)}`,
             { responseType: 'text' }
         );
     }
-
 
     forgotPasswordVerify(email: string, otp: string) {
         return this.http.post(
@@ -63,16 +72,15 @@ export class AuthService {
         );
     }
 
-    // gửi OTP khi user nhập email, sđt, password
     sendRegisterOtp(payload: any) {
-        return this.http.post(
+        return this.http.post<any>(
             `${environment.apiBaseUrl}/auth/verify-register-otp`,
             payload,
-            { responseType: 'text' }
+            { responseType: 'text' as 'json' }
         );
     }
 
-    // xác thực OTP và tạo tài khoản
+
     createAccountAfterOtp(payload: any) {
         return this.http.post(
             `${environment.apiBaseUrl}/auth/create-verify-otp`,
@@ -81,18 +89,15 @@ export class AuthService {
         );
     }
 
+    // 🔑 Gọi khi login thành công
+    setLogin(token: string) {
+        this.tokenService.setToken(token);
+        this.loggedIn.next(true);
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    // 🔑 Gọi khi logout (hoặc token hết hạn)
+    setLogout() {
+        this.tokenService.removeToken();
+        this.loggedIn.next(false);
+    }
 }

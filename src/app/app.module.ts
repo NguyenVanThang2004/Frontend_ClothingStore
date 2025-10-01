@@ -8,7 +8,7 @@ import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-
+import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './components/home/home.component';
 import { HeaderComponent } from './components/header/header.component';
@@ -35,6 +35,8 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { MyOrdersComponent } from './components/my-order/my-order.component';
 import { PaymentResultComponent } from './components/payment-result/payment-result.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { ForbiddenComponent } from './components/forbidden/forbidden.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 
 @NgModule({
@@ -63,7 +65,9 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
     ProfileComponent,
     MyOrdersComponent,
     PaymentResultComponent,
-    ForgotPasswordComponent
+    ForgotPasswordComponent,
+    ForbiddenComponent,
+    NotFoundComponent
 
   ],
   imports: [
@@ -82,6 +86,8 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
 
   ],
   providers: [
+    { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
+    JwtHelperService,
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
   ],
   bootstrap: [MainComponent]
