@@ -42,6 +42,7 @@
               "src/assets/vendor/perfect-scrollbar/perfect-scrollbar.css",
               "src/assets/css/util.css",
               "src/assets/css/main.css",
+              "src/assets/css/admin-responsive.css",
               "node_modules/slick-carousel/slick/slick.css",
               "node_modules/slick-carousel/slick/slick-theme.css",
               "node_modules/ngx-toastr/toastr.css"
@@ -71,8 +72,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",

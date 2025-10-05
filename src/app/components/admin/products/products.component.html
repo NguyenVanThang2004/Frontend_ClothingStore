@@ -1,20 +1,21 @@
 <div class="card shadow p-3">
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4>Quản lý sản phẩm</h4>
-        <div class="d-flex gap-2">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center mb-3 gap-3">
+        <h4 class="mb-0">Quản lý sản phẩm</h4>
+        <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-lg-auto">
             <!-- Search -->
-            <input class="form-control" style="width:200px" [(ngModel)]="keyword" (keyup.enter)="applyFilter()"
+            <input class="form-control" style="min-width:200px" [(ngModel)]="keyword" (keyup.enter)="applyFilter()"
                 placeholder="Tìm kiếm..." />
 
             <!-- Category filter -->
-            <select class="form-select" style="width:200px" [(ngModel)]="selectedCategoryId" (change)="applyFilter()">
+            <select class="form-select" style="min-width:200px" [(ngModel)]="selectedCategoryId" (change)="applyFilter()">
                 <option [ngValue]="null">-- Tất cả danh mục --</option>
                 <option *ngFor="let cat of categories" [ngValue]="cat.id">{{cat.name}}</option>
             </select>
 
             <button class="btn btn-success" (click)="openAdd()">
-                <i class="fa fa-plus"></i> Thêm sản phẩm
+                <i class="fa fa-plus me-1"></i> <span class="d-none d-sm-inline">Thêm sản phẩm</span>
+                <span class="d-sm-none">Thêm</span>
             </button>
         </div>
     </div>
@@ -26,61 +27,68 @@
 
 
     <!-- Table sản phẩm -->
-    <table class="table table-bordered table-hover">
-        <thead class="thead-dark">
-            <tr>
-                <th>Mã</th>
-                <th>Tên sản phẩm</th>
-                <th>Giá gốc</th>
-                <th>Danh mục</th>
-                <th>Ngày tạo</th>
-                <th>Ngày cập nhật</th>
-                <th>Hành động</th>
-            </tr>
-        </thead>
-        <tbody *ngIf="!loading; else loadingTpl">
-            <tr *ngFor="let p of products">
-                <td>{{ p.id }}</td>
-                <td>{{ p.name }}</td>
-                <td>{{ p.price }}</td>
-                <td>{{ p.category.name }}</td>
-                <td>{{ ((p.createdAt) | date:'dd/MM/yyyy HH:mm:ss':'Asia/Bangkok') ?? '—' }}</td>
-                <td>{{ p.updatedAt ? (p.updatedAt | date:'dd/MM/yyyy HH:mm:ss':'Asia/Bangkok') : '—' }}</td>
-
-
-
-                <td>
-
-                    <button class="btn btn-primary btn-sm me-1" (click)="openDetail(p)">
-                        <i class="fa fa-eye me-1"></i>
-                    </button>
-
-                    <button class="btn btn-primary btn-sm me-1" (click)="openEdit(p)">
-                        <i class="fa fa-edit"></i>
-                    </button>
-                    <button class="btn btn-danger btn-sm me-1" (click)="openDelete()">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                    <button class="btn btn-info btn-sm me-1" (click)="openVariants(p)">
-                        <i class="fa fa-layer-group me-1"></i> Biến thể
-                    </button>
-                </td>
-            </tr>
-        </tbody>
-        <ng-template #loadingTpl>
-            <tbody>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
                 <tr>
-                    <td colspan="11">Đang tải...</td>
+                    <th class="d-none d-md-table-cell">Mã</th>
+                    <th>Tên sản phẩm</th>
+                    <th class="d-none d-lg-table-cell">Giá gốc</th>
+                    <th class="d-none d-md-table-cell">Danh mục</th>
+                    <th class="d-none d-lg-table-cell">Ngày tạo</th>
+                    <th class="d-none d-xl-table-cell">Ngày cập nhật</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody *ngIf="!loading; else loadingTpl">
+                <tr *ngFor="let p of products">
+                    <td class="d-none d-md-table-cell">{{ p.id }}</td>
+                    <td>
+                        <div class="d-flex flex-column">
+                            <strong>{{ p.name }}</strong>
+                            <small class="text-muted d-md-none">
+                                ID: {{ p.id }} | Giá: {{ p.price | number }}đ | {{ p.category.name }}
+                            </small>
+                        </div>
+                    </td>
+                    <td class="d-none d-lg-table-cell">{{ p.price | number }}đ</td>
+                    <td class="d-none d-md-table-cell">{{ p.category.name }}</td>
+                    <td class="d-none d-lg-table-cell">{{ ((p.createdAt) | date:'dd/MM/yyyy':'Asia/Bangkok') ?? '—' }}</td>
+                    <td class="d-none d-xl-table-cell">{{ p.updatedAt ? (p.updatedAt | date:'dd/MM/yyyy':'Asia/Bangkok') : '—' }}</td>
+                    <td>
+                        <div class="btn-group-vertical btn-group-sm d-flex d-md-inline-flex" role="group">
+                            <button class="btn btn-primary btn-sm mb-1" (click)="openDetail(p)" title="Xem chi tiết">
+                                <i class="fa fa-eye"></i>
+                            </button>
+                            <button class="btn btn-warning btn-sm mb-1" (click)="openEdit(p)" title="Sửa">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm mb-1" (click)="openDelete()" title="Xóa">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                            <button class="btn btn-info btn-sm" (click)="openVariants(p)" title="Biến thể">
+                                <i class="fa fa-layer-group"></i>
+                            </button>
+                        </div>
+                    </td>
                 </tr>
             </tbody>
-        </ng-template>
-
-    </table>
+            <ng-template #loadingTpl>
+                <tbody>
+                    <tr>
+                        <td colspan="7" class="text-center">Đang tải...</td>
+                    </tr>
+                </tbody>
+            </ng-template>
+        </table>
+    </div>
 </div>
 
 <!-- Pagination -->
-<div class="d-flex justify-content-between align-items-center mt-2">
-    <div>Tổng: {{ meta.total }} | Trang {{ meta.page }} / {{ meta.pages }}</div>
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mt-3 gap-2">
+    <div class="text-center text-sm-start">
+        <small class="text-muted">Tổng: {{ meta.total }} | Trang {{ meta.page }} / {{ meta.pages }}</small>
+    </div>
     <div class="btn-group">
         <button class="btn btn-outline-secondary" (click)="prev()" [disabled]="meta.page<=1">«</button>
         <button class="btn btn-outline-secondary" (click)="next()" [disabled]="meta.page>=meta.pages">»</button>
@@ -89,7 +97,7 @@
 
 <!-- ADD PRODUCT MODAL -->
 <div #productAddModal class="modal fade" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <form (ngSubmit)="saveAll()" #productForm="ngForm" novalidate>
                 <div class="modal-header">
@@ -177,7 +185,7 @@
 
 <!-- VIEW PRODUCT MODAL -->
 <div #productDetailModal class="modal fade" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Chi tiết sản phẩm</h5>
@@ -245,7 +253,7 @@
 
 <!-- EDIT PRODUCT MODAL -->
 <div #productEditModal class="modal fade" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <form (ngSubmit)="saveEdit(editForm)" #editForm="ngForm" novalidate>
                 <div class="modal-header">
@@ -304,7 +312,7 @@
 
 <!-- VARIANT MANAGEMENT MODAL -->
 <div #variantModal class="modal fade" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Quản lý biến thể - {{ selectedProduct?.name }}</h5>

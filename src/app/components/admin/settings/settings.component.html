@@ -1,31 +1,35 @@
 <div class="container py-4">
     <!-- Header -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center mb-4 gap-3">
         <div>
             <h3 class="mb-0">Quản lý Banner</h3>
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-lg-auto">
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalUpsertBanner">
-                <i class="fa fa-plus me-1"></i> Thêm banner
+                <i class="fa fa-plus me-1"></i> <span class="d-none d-sm-inline">Thêm banner</span>
+                <span class="d-sm-none">Thêm</span>
             </button>
             <button class="btn btn-outline-secondary">
-                <i class="fa fa-arrows-alt me-1"></i> Sắp xếp nhanh
+                <i class="fa fa-arrows-alt me-1"></i> <span class="d-none d-sm-inline">Sắp xếp nhanh</span>
+                <span class="d-sm-none">Sắp xếp</span>
             </button>
         </div>
     </div>
 
     <!-- Tabs vị trí -->
-    <ul class="nav nav-pills mb-3" id="bannerTabs" role="tablist">
+    <ul class="nav nav-pills nav-fill mb-4" id="bannerTabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="tab-slider" data-bs-toggle="pill" data-bs-target="#pane-slider"
                 type="button" role="tab" aria-controls="pane-slider" aria-selected="true">
-                Banner Slider (đầu trang)
+                <span class="d-none d-sm-inline">Banner Slider (đầu trang)</span>
+                <span class="d-sm-none">Slider</span>
             </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="tab-tile" data-bs-toggle="pill" data-bs-target="#pane-tile" type="button"
                 role="tab" aria-controls="pane-tile" aria-selected="false">
-                Banner Ô nhỏ (tile)
+                <span class="d-none d-sm-inline">Banner Ô nhỏ (tile)</span>
+                <span class="d-sm-none">Tile</span>
             </button>
         </li>
     </ul>
@@ -44,44 +48,50 @@
                         <table class="table table-hover align-middle">
                             <thead class="table-light">
                                 <tr>
-                                    <th style="width:48px;">#</th>
+                                    <th class="d-none d-md-table-cell" style="width:48px;">#</th>
                                     <th style="width:82px;">Ảnh</th>
                                     <th>Tiêu đề</th>
-                                    <th>Phụ đề</th>
-                                    <th>Link</th>
-                                    <th class="text-center" style="width:110px;">Thứ tự</th>
-                                    <th class="text-center" style="width:90px;">Trạng thái</th>
-                                    <th class="text-center" style="width:200px;">Hiệu lực</th>
+                                    <th class="d-none d-lg-table-cell">Phụ đề</th>
+                                    <th class="d-none d-xl-table-cell">Link</th>
+                                    <th class="text-center d-none d-lg-table-cell" style="width:110px;">Thứ tự</th>
+                                    <th class="text-center d-none d-md-table-cell" style="width:90px;">Trạng thái</th>
+                                    <th class="text-center d-none d-xl-table-cell" style="width:200px;">Hiệu lực</th>
                                     <th class="text-end" style="width:170px;">Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <!-- Row mẫu 1 -->
                                 <tr>
-                                    <td class="text-muted"><i class="fa fa-grip-vertical"></i></td>
+                                    <td class="text-muted d-none d-md-table-cell"><i class="fa fa-grip-vertical"></i></td>
                                     <td>
                                         <img src="/assets/images/slide-01.jpg" alt="banner" class="rounded"
                                             style="width:72px;height:48px;object-fit:cover;">
                                     </td>
-                                    <td>Giảm 30% BST Thu Đông</td>
-                                    <td>Chỉ trong tuần này</td>
-                                    <td class="text-truncate" style="max-width:220px;">
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <strong>Giảm 30% BST Thu Đông</strong>
+                                            <small class="text-muted d-lg-none">Chỉ trong tuần này</small>
+                                            <small class="text-muted d-xl-none">#1 | Hiển thị</small>
+                                        </div>
+                                    </td>
+                                    <td class="d-none d-lg-table-cell">Chỉ trong tuần này</td>
+                                    <td class="d-none d-xl-table-cell text-truncate" style="max-width:220px;">
                                         <a href="/collections/thu-dong"
                                             class="text-decoration-none">/collections/thu-dong</a>
                                     </td>
-                                    <td class="text-center">1</td>
-                                    <td class="text-center">
+                                    <td class="text-center d-none d-lg-table-cell">1</td>
+                                    <td class="text-center d-none d-md-table-cell">
                                         <span class="badge bg-success">Hiển thị</span>
                                     </td>
-                                    <td class="text-center">
+                                    <td class="text-center d-none d-xl-table-cell">
                                         <div class="small">Từ: 01/09/2025</div>
                                         <div class="small">Đến: 30/09/2025</div>
                                     </td>
                                     <td class="text-end">
-                                        <div class="btn-group">
-                                            <button class="btn btn-outline-secondary btn-sm" title="Ẩn/Hiện"><i
+                                        <div class="btn-group-vertical btn-group-sm d-flex d-md-inline-flex" role="group">
+                                            <button class="btn btn-outline-secondary btn-sm mb-1" title="Ẩn/Hiện"><i
                                                     class="fa fa-eye-slash"></i></button>
-                                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                            <button class="btn btn-warning btn-sm mb-1" data-bs-toggle="modal"
                                                 data-bs-target="#modalUpsertBanner" title="Sửa">
                                                 <i class="fa fa-edit"></i>
                                             </button>

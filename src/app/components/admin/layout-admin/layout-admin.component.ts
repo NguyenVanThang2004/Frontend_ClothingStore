@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/service/auth.service';
 import { TokenService } from 'src/app/service/token.service';
@@ -11,8 +11,8 @@ import { TokenService } from 'src/app/service/token.service';
 })
 export class LayoutAdminComponent implements OnInit {
 
-
   userName: string = '';
+  sidebarOpen: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -20,12 +20,27 @@ export class LayoutAdminComponent implements OnInit {
     private router: Router
   ) { }
 
-
   ngOnInit(): void {
     this.authService.getCurrentUserName().subscribe({
       next: (name: string) => this.userName = name,
       error: () => this.userName = 'Người dùng'
     });
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    // Auto close sidebar on mobile when resizing to desktop
+    if (event.target.innerWidth >= 992 && this.sidebarOpen) {
+      this.sidebarOpen = false;
+    }
+  }
+
+  toggleSidebar(): void {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  closeSidebar(): void {
+    this.sidebarOpen = false;
   }
 
   logout(): void {
@@ -41,6 +56,4 @@ export class LayoutAdminComponent implements OnInit {
       }
     });
   }
-
-
 }
